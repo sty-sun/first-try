@@ -64,7 +64,7 @@ public enum Inernal_Code {
 
     public int getNum(String word){
         for (Inernal_Code inernal_code:values()){
-            if (inernal_code.getWord() == word){
+            if (inernal_code.getWord().equals(word)){
                 return inernal_code.getNum();
             }
         }
