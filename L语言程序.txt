@@ -1,4 +1,3 @@
-3.143abcd；
 begin
-	output("Hello world!");
+    var;
 end

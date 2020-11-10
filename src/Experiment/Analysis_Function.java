@@ -2,6 +2,7 @@ package Experiment;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
 
 public class Analysis_Function {
     /**
@@ -27,18 +28,52 @@ public class Analysis_Function {
                 char judgeChar = chars[i];
                 //关键字和标识符分析程序
                 if (Character.isLowerCase(judgeChar) || Character.isUpperCase(judgeChar)) {
-                    LetterFunction();
+                    i=LetterFunction(i,chars);
                 } else if (Character.isDigit(judgeChar)) {
                     i = DigitFunction(chars,i,line);
                     ErrorMessage();
                 } else {
-                    //OtherLetterFunction();
+                    OtherLetterFunction(chars,i,line);
                 }
             }
         }
     }
-    public static void LetterFunction(){
 
+    /**
+     *
+     * @param head
+     * @param chars
+     * @return
+     */
+    public static int LetterFunction(int head,char[] chars){
+        //单词最后一个字符的下标
+        int rear=head;
+        //识别出的字符串
+        String judgeStr="";
+        //字符串对应的枚举类中的编号，初始为0表示不在枚举类中
+        int judgeNum=0;
+        //字符串长度
+        int strLen=0;
+        for (int i=head;i<chars.length;i++){
+            if (Character.isLowerCase(chars[i])||Character.isUpperCase(chars[i])){
+                rear=i+1;
+            }else if (Character.isDigit(chars[i])){
+                rear=i+1;
+            }else{
+                break;
+            }
+        }
+        strLen=rear-head;
+        judgeStr=judgeStr.copyValueOf(chars,head,strLen);
+        try {
+            judgeNum=Inernal_Code.getNum(judgeStr);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        if (judgeNum!=0){
+            System.out.println(Inernal_Code.getWord(judgeNum));
+        }
+        return rear-1;
     }
     /**
      *数字分析程序
@@ -106,8 +141,15 @@ public class Analysis_Function {
         }
         return i;
     }
-    public static void OtherLetterFunction(char[] chars,int circle,int line){
 
+    /**
+     *
+     * @param chars
+     * @param head
+     * @param line
+     */
+    public static void OtherLetterFunction(char[] chars,int head,int line){
+        System.out.println(chars[head]);
     }
 
     /**

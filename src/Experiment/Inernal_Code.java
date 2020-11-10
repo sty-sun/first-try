@@ -16,7 +16,7 @@ public enum Inernal_Code {
     REAL("real",13),
     THEN("then",14),
     TRUE("true",15),
-    VAR("true",16),
+    VAR("var",16),
     WHILE("while",17),
     SYMPLE("标识符",18),
     INT("整数",19),
@@ -53,7 +53,7 @@ public enum Inernal_Code {
         return word;
     }
 
-    public String getWord(int num){
+    public static String getWord(int num){
         for (Inernal_Code inernal_code:values()){
             if (inernal_code.getNum() == num){
                 return inernal_code.getWord();
@@ -62,7 +62,7 @@ public enum Inernal_Code {
         throw new RuntimeException("没有找到对应的枚举");
     }
 
-    public int getNum(String word){
+    public static int getNum(String word){
         for (Inernal_Code inernal_code:values()){
             if (inernal_code.getWord().equals(word)){
                 return inernal_code.getNum();
