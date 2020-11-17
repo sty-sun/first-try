@@ -171,12 +171,12 @@ public class AnalysisFunction {
             //不是字母也不是小数点，即代表着该标识符代表的数字已经全部录完
             else {
                 if (flagWrong == true) {
-                    string = String.copyValueOf(chars, circle, num);
+                    string = String.copyValueOf(chars, circle, num - circle);
                     break;
                 }
                 else {
                     num = i;
-                    string = String.copyValueOf(chars,circle,num);
+                    string = String.copyValueOf(chars,circle,num - circle);
                     break;
                 }
             }
@@ -192,7 +192,7 @@ public class AnalysisFunction {
         if (flagPoint == false){
             //判断该数为整数
             int number = Integer.parseInt(string);
-            string = String.copyValueOf(chars, circle, num);
+            string = String.copyValueOf(chars, circle, num - circle);
             symble.setName(string);
             symble.setType(19);
             token.setName("整数");
@@ -201,7 +201,7 @@ public class AnalysisFunction {
         else {
             //判断该数为小数
             double number = Double.parseDouble(string);
-            string = String.copyValueOf(chars, circle, num);
+            string = String.copyValueOf(chars, circle, num - circle);
             symble.setName(string);
             symble.setType(20);
             token.setName("实数");
