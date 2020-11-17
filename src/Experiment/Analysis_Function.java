@@ -20,8 +20,10 @@ public class Analysis_Function {
      * @param readMap
      */
     public static void judge(Map<Integer, String> readMap){
+        //line里面存储的是读到的第几行，line从1开始的；
         for (int line=1;line<=readMap.size();line++) {
             String string = readMap.get(line);
+            //将这一行当中所有的字符全部存储在一个字符数组中；
             char[] chars = new char[string.length()];
             string.getChars(0, string.length(), chars, 0);
             for (int i = 0; i < chars.length; i++) {
@@ -65,6 +67,7 @@ public class Analysis_Function {
         }
         strLen=rear-head;
         judgeStr=judgeStr.copyValueOf(chars,head,strLen);
+        //根据匹配结果判断是标识符还是关键字，相应的存储进token和symble表
         try {
             judgeNum=Inernal_Code.getNum(judgeStr);
         } catch (Exception e) {
