@@ -2,13 +2,16 @@ package Experiment;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.ConsoleHandler;
 
-public class Analysis_Function {
+public class AnalysisFunction {
     /**
      * 错误列表变量
      */
-    public static ArrayList<WrongList> list = new ArrayList<WrongList>();
+    public static ArrayList<WrongList> wrongLists = new ArrayList<WrongList>();
+    //符号表序号
+    public static int symbleNum=1;
+    //token表序号
+    public static int tokenNum=1;
 
     public static void preProcess(String string) {
         //可以替换大部分空白字符， 不限于空格 ；
@@ -19,7 +22,9 @@ public class Analysis_Function {
      * 字符判断程序
      * @param readMap
      */
-    public static void judge(Map<Integer, String> readMap){
+    public List judge(Map<Integer, String> readMap){
+        //存放token表和symble表的类实例化
+        List list=new List();
         //line里面存储的是读到的第几行，line从1开始的；
         for (int line=1;line<=readMap.size();line++) {
             String string = readMap.get(line);
@@ -30,24 +35,26 @@ public class Analysis_Function {
                 char judgeChar = chars[i];
                 //关键字和标识符分析程序
                 if (Character.isLowerCase(judgeChar) || Character.isUpperCase(judgeChar)) {
-                    i=LetterFunction(i,chars);
+                    i=LetterFunction(i,chars,list);
                 } else if (Character.isDigit(judgeChar)) {
-                    i = DigitFunction(chars,i,line);
+                    i = DigitFunction(chars,i,line,list);
                     ErrorMessage();
                 } else {
-                    OtherLetterFunction(chars,i,line);
+                    OtherLetterFunction(chars,i,list);
                 }
             }
         }
+        return list;
     }
 
     /**
-     *
-     * @param head
-     * @param chars
+     *关键字或标识符判断
+     * @param head 单词开始下标
+     * @param chars 要识别的行
+     * @param list 表实例
      * @return
      */
-    public static int LetterFunction(int head,char[] chars){
+    public static int LetterFunction(int head,char[] chars,List list){
         //单词最后一个字符的下标
         int rear=head;
         //识别出的字符串
@@ -69,19 +76,48 @@ public class Analysis_Function {
         judgeStr=judgeStr.copyValueOf(chars,head,strLen);
         //根据匹配结果判断是标识符还是关键字，相应的存储进token和symble表
         try {
-            judgeNum=Inernal_Code.getNum(judgeStr);
+            judgeNum= InernalCode.getNum(judgeStr);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            //是标识符
+            //symble
+            Symble symble=new Symble();
+            symble.setNumber(symbleNum);
+            symble.setName(judgeStr);
+            //18为标识符
+            symble.setType(18);
+            list.symbles.add(symble);
+            //token
+            Token token=new Token();
+            token.setLabel(tokenNum);
+            tokenNum++;
+            token.setName(judgeStr);
+            token.setCode(18);
+            token.setAddress(symbleNum);
+            symbleNum++;
+            list.tokens.add(token);
         }
         if (judgeNum!=0){
-            System.out.println(Inernal_Code.getWord(judgeNum));
+            //是关键字
+            Token token=new Token();
+            token.setLabel(tokenNum);
+            tokenNum++;
+            token.setName(judgeStr);
+            token.setCode(judgeNum);
+            token.setAddress(-1);
+            list.tokens.add(token);
         }
         return rear-1;
     }
+
     /**
-     *数字分析程序
+     * 数字分析
+     * @param chars
+     * @param circle
+     * @param line
+     * @param list 表实例
+     * @return
      */
-    public static int DigitFunction(char[] chars,int circle,int line){
+    public static int DigitFunction(char[] chars,int circle,int line,List list){
         //num指的是符合数字规范的最后一位
         int num = 0;
         //整个包含数字的字符串的最后一位
@@ -104,11 +140,11 @@ public class Analysis_Function {
                     num = i;
                     if (!flagPoint) {
                         WrongList wrong = new WrongList(line, "数字开头的数字、字母串");
-                        list.add(wrong);
+                        wrongLists.add(wrong);
                     }
                     else {
                         WrongList wrong = new WrongList(line,"实数的小数部分出现字母");
-                        list.add(wrong);
+                        wrongLists.add(wrong);
                     }
                     string = String.copyValueOf(chars, circle, num);
                     System.out.println(string);
@@ -130,7 +166,7 @@ public class Analysis_Function {
                 else{
                     num = i;
                     WrongList wrong = new WrongList(line,"实数中出现两个小数点");
-                    list.add(wrong);
+                    wrongLists.add(wrong);
                 }
                 string = String.copyValueOf(chars,circle,num);
                 System.out.println(string);
@@ -146,20 +182,29 @@ public class Analysis_Function {
     }
 
     /**
-     *
+     *其他符号判断
      * @param chars
      * @param head
-     * @param line
+     * @param list
      */
-    public static void OtherLetterFunction(char[] chars,int head,int line){
-        System.out.println(chars[head]);
+    public static void OtherLetterFunction(char[] chars,int head,List list){
+        int judgeNum=0;
+        boolean err=false;
+        String judgeStr=chars[head]+"";
+        try {
+            InernalCode.getNum(judgeStr);
+        } catch (Exception e) {
+            //出错情况(符号不在给出的单词表中)，请孙天宇同学添加
+            err=true;
+        }
+
     }
 
     /**
      * 错误列表打印
      */
     public static void ErrorMessage(){
-        int count = list.size();
+        int count = wrongLists.size();
         if (count == 0){
             System.out.println("小伙子挺厉害的啊，再接再厉！");
         }
@@ -167,7 +212,7 @@ public class Analysis_Function {
             System.out.println("总共出现" + count + "个错误");
             for (int i = 0; i < count; i++) {
                 WrongList wrong = new WrongList();
-                wrong = list.get(i);
+                wrong = wrongLists.get(i);
                 System.out.println("    出现的错误所在行为:"+wrong.getLine()+",错误编号是"+(i+1)+",错误说明为:"+wrong.getDescription()+",问题已改正");
             }
         }

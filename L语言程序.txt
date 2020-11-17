@@ -1,3 +1,6 @@
 begin
 hello world!;
+var
+add
+zzh
 end;

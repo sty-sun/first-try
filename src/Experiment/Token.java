@@ -9,6 +9,16 @@ public class Token {
     public Token() {
     }
 
+    @Override
+    public String toString() {
+        return "Token{" +
+                "label=" + label +
+                ", name='" + name + '\'' +
+                ", code=" + code +
+                ", address=" + address +
+                '}';
+    }
+
     public Token(int label, String name, int code, int address) {
         this.label = label;
         this.name = name;

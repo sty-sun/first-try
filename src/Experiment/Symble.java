@@ -5,6 +5,15 @@ public class Symble {
     private int type;
     private String name;
 
+    @Override
+    public String toString() {
+        return "Symble{" +
+                "number=" + number +
+                ", type=" + type +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public Symble() {
     }
 

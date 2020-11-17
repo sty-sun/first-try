@@ -1,11 +1,9 @@
 package Experiment;
 
-import java.awt.image.BufferedImageFilter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +24,16 @@ public class Main {
             readMap.put(circle,str);
             circle++;
         }
-        Analysis_Function.judge(readMap);
-        //System.out.println(readMap.get(3));
+        AnalysisFunction analysisFunction=new AnalysisFunction();
+        List list = analysisFunction.judge(readMap);
+        for (Token token:list.tokens){
+            System.out.println(token.toString());
+        }
+        System.out.println("--------------------------------");
+        for (Symble symble:list.symbles){
+            System.out.println(symble.toString());
+        }
+
+
     }
 }

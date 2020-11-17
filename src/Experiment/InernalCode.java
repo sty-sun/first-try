@@ -1,6 +1,6 @@
 package Experiment;
 
-public enum Inernal_Code {
+public enum InernalCode {
     AND("and",1),
     BEGIN("begin",2),
     BOOL("bool",3),
@@ -40,7 +40,7 @@ public enum Inernal_Code {
     BE(">=",37);
     private final String word;
     private final int num;
-    Inernal_Code(String word, int num) {
+    InernalCode(String word, int num) {
         this.word = word;
         this.num = num;
     }
@@ -54,7 +54,7 @@ public enum Inernal_Code {
     }
 
     public static String getWord(int num){
-        for (Inernal_Code inernal_code:values()){
+        for (InernalCode inernal_code:values()){
             if (inernal_code.getNum() == num){
                 return inernal_code.getWord();
             }
@@ -63,7 +63,7 @@ public enum Inernal_Code {
     }
 
     public static int getNum(String word){
-        for (Inernal_Code inernal_code:values()){
+        for (InernalCode inernal_code:values()){
             if (inernal_code.getWord().equals(word)){
                 return inernal_code.getNum();
             }
