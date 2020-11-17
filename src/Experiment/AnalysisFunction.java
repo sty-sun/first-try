@@ -38,7 +38,6 @@ public class AnalysisFunction {
                     i=LetterFunction(i,chars,list);
                 } else if (Character.isDigit(judgeChar)) {
                     i = DigitFunction(chars,i,line,list);
-
                 } else {
                     OtherLetterFunction(chars,i,list);
                 }
