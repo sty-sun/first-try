@@ -1,6 +1,2 @@
-begin
-hello world!;
-var
-add
-zzh
-end;
+ a = 3.15;
+ 3.15;

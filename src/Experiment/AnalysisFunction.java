@@ -38,12 +38,13 @@ public class AnalysisFunction {
                     i=LetterFunction(i,chars,list);
                 } else if (Character.isDigit(judgeChar)) {
                     i = DigitFunction(chars,i,line,list);
-                    ErrorMessage();
+
                 } else {
                     OtherLetterFunction(chars,i,list);
                 }
             }
         }
+        ErrorMessage();
         return list;
     }
 
@@ -124,60 +125,91 @@ public class AnalysisFunction {
         int end;
         boolean flagPoint = false;
         boolean flagLetter = false;
-        String string;
+        boolean flagWrong = false;
+        //最后符合标准的数字字符串
+        String string = "1";
         //for (int i=circle;i<chars.length;i++){
         int i = circle;
-        while (i < chars.length){
-            if (Character.isDigit(chars[i])){
+        while (i < chars.length) {
+            if (Character.isDigit(chars[i])) {
                 //当前字符是数字就继续向下走
                 i++;
                 continue;
-            }
-            else if (Character.isLetter(chars[i])){
+            } else if (Character.isLetter(chars[i])) {
                 //如果当前字符是字母，那么截去后面的
                 if (!flagLetter) {
                     flagLetter = true;
+                    flagWrong = true;
                     num = i;
                     if (!flagPoint) {
                         WrongList wrong = new WrongList(line, "数字开头的数字、字母串");
                         wrongLists.add(wrong);
-                    }
-                    else {
-                        WrongList wrong = new WrongList(line,"实数的小数部分出现字母");
+                    } else {
+                        WrongList wrong = new WrongList(line, "实数的小数部分出现字母");
                         wrongLists.add(wrong);
                     }
-                    string = String.copyValueOf(chars, circle, num);
-                    System.out.println(string);
                 }
                 //已经不是第一个字母了，就不必输出了
-                else{
+                else {
                     i++;
                     continue;
                 }
-            }
-            else if (chars[i]=='.'){
+            } else if (chars[i] == '.') {
                 //碰到第一个小数点的情况
-                if (!flagPoint){
+                if (!flagPoint) {
                     flagPoint = true;
                     i++;
                     continue;
                 }
                 //碰到第二个小数点需要截去
-                else{
-                    num = i;
-                    WrongList wrong = new WrongList(line,"实数中出现两个小数点");
+                else {
+                    flagWrong = true;
+                    num = i-1;
+                    WrongList wrong = new WrongList(line, "实数中出现两个小数点");
                     wrongLists.add(wrong);
                 }
-                string = String.copyValueOf(chars,circle,num);
-                System.out.println(string);
             }
             //不是字母也不是小数点，即代表着该标识符代表的数字已经全部录完
-            else{
-
-                break;
+            else {
+                if (flagWrong == true) {
+                    string = String.copyValueOf(chars, circle, num);
+                    break;
+                }
+                else {
+                    num = i;
+                    string = String.copyValueOf(chars,circle,num);
+                    break;
+                }
             }
-            i++;
         }
+        //Symble
+        Symble symble = new Symble();
+        symble.setNumber(symbleNum);
+        //Token
+        Token token = new Token();
+        token.setLabel(tokenNum);
+        tokenNum++;
+        token.setAddress(symbleNum);
+        if (flagPoint == false){
+            //判断该数为整数
+            int number = Integer.parseInt(string);
+            string = String.copyValueOf(chars, circle, num);
+            symble.setName(string);
+            symble.setType(19);
+            token.setName("整数");
+            token.setCode(19);
+        }
+        else {
+            //判断该数为小数
+            double number = Double.parseDouble(string);
+            string = String.copyValueOf(chars, circle, num);
+            symble.setName(string);
+            symble.setType(20);
+            token.setName("实数");
+            token.setCode(20);
+        }
+        symbleNum++;
+        list.symbles.add(symble);
         return i;
     }
 
