@@ -33,14 +33,17 @@ public class AnalysisFunction {
             char[] chars = new char[string.length()];
             string.getChars(0, string.length(), chars, 0);
             for (int i = 0; i < chars.length; i++) {
-                char judgeChar = chars[i];
                 //关键字和标识符分析程序
-                if (Character.isLowerCase(judgeChar) || Character.isUpperCase(judgeChar)) {
+                if (Character.isLowerCase(chars[i]) || Character.isUpperCase(chars[i])) {
                     i=LetterFunction(i,chars,list);
-                } else if (Character.isDigit(judgeChar)) {
+                } else if (Character.isDigit(chars[i])) {
                     i = DigitFunction(chars,i,line,list);
                 } else {
-                    OtherLetterFunction(chars,i,list);
+                    if (chars[i]==' '){
+
+                    }else {
+                        i = OtherLetterFunction(chars, i, list);
+                    }
                 }
             }
         }
@@ -188,7 +191,6 @@ public class AnalysisFunction {
         //Token
         Token token = new Token();
         token.setLabel(tokenNum);
-        tokenNum++;
         token.setAddress(symbleNum);
         if (flagPoint == false){
             //判断该数为整数
@@ -196,7 +198,7 @@ public class AnalysisFunction {
             string = String.copyValueOf(chars, circle, num - circle);
             symble.setName(string);
             symble.setType(19);
-            token.setName("整数");
+            token.setName(string);
             token.setCode(19);
         }
         else {
@@ -205,12 +207,14 @@ public class AnalysisFunction {
             string = String.copyValueOf(chars, circle, num - circle);
             symble.setName(string);
             symble.setType(20);
-            token.setName("实数");
+            token.setName(string);
             token.setCode(20);
         }
         symbleNum++;
+        tokenNum++;
         list.symbles.add(symble);
-        return i;
+        list.tokens.add(token);
+        return i-1;
     }
 
     /**
@@ -219,17 +223,55 @@ public class AnalysisFunction {
      * @param head
      * @param list
      */
-    public static void OtherLetterFunction(char[] chars,int head,List list){
+    public static int OtherLetterFunction(char[] chars,int head,List list){
+        //对应机内码
         int judgeNum=0;
+        //出错标识符
         boolean err=false;
+        //符号结束下标
+        int rear=head;
         String judgeStr=chars[head]+"";
         try {
-            InernalCode.getNum(judgeStr);
+            judgeNum = InernalCode.getNum(judgeStr);
         } catch (Exception e) {
-            //出错情况(符号不在给出的单词表中)，请孙天宇同学添加
+            //出错情况(符号不在给出的单词表中)，请孙天宇同学添加非法字符错误
             err=true;
         }
-
+        //没出错
+        if (!err){
+            //判断是否是两个符号
+            //>=
+            if (judgeStr.equals(">")){
+                rear++;
+                if (chars[rear]=='='){
+                    judgeStr+=chars[rear]+"";
+                }
+            }
+            //<=或<>
+            if (judgeStr.equals("<")){
+                rear++;
+                if (chars[rear]=='='||chars[rear]=='>'){
+                    judgeStr+=chars[rear]+"";
+                }
+            }
+            //:=
+            if (judgeStr.equals(":")){
+                rear++;
+                if (chars[rear]=='='){
+                    judgeStr+=chars[rear]+"";
+                }
+            }
+            judgeNum=InernalCode.getNum(judgeStr);
+            //添加到token表中
+            Token token=new Token();
+            token.setLabel(tokenNum);
+            tokenNum++;
+            token.setName(judgeStr);
+            token.setCode(judgeNum);
+            token.setAddress(-1);
+            list.tokens.add(token);
+        }
+        return rear;
     }
 
     /**
