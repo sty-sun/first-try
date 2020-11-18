@@ -2,6 +2,7 @@ import Lexical_analyzer.AnalysisFunction;
 import Lexical_analyzer.List;
 import Lexical_analyzer.Symble;
 import Lexical_analyzer.Token;
+import Syntax_and_Semantic_Analyzer.Parser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,7 +37,7 @@ public class Main {
         for (Symble symble:list.symbles){
             System.out.println(symble.toString());
         }
-
-
+        Parser parser = new Parser();
+        parser.runParser(list);
     }
 }

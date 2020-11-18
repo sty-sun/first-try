@@ -1,12 +1,10 @@
 package Syntax_and_Semantic_Analyzer;
 
 public class EQU {
-    private double a;
     private int op;
     private int op1;
     private int op2;
     private int result;
-    private int zzh;
 
     public EQU() {
     }
