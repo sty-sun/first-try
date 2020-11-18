@@ -1,4 +1,4 @@
-package Experiment;
+package Lexical_analyzer;
 
 public enum InernalCode {
     AND("and",1),

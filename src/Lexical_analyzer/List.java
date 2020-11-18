@@ -1,4 +1,4 @@
-package Experiment;
+package Lexical_analyzer;
 
 import java.util.ArrayList;
 

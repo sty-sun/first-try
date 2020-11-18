@@ -1,4 +1,4 @@
-package Experiment;
+package Lexical_analyzer;
 
 public class WrongList {
     private int Line;
