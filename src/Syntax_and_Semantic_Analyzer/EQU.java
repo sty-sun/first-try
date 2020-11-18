@@ -5,6 +5,7 @@ public class EQU {
     private int op1;
     private int op2;
     private int result;
+    private int zzh;
 
     public EQU() {
     }
