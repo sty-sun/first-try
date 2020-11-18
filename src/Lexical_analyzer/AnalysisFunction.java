@@ -42,7 +42,7 @@ public class AnalysisFunction {
                     if (chars[i]==' '){
 
                     }else {
-                        i = OtherLetterFunction(chars, i, list);
+                        i = OtherLetterFunction(chars,line, i, list);
                     }
                 }
             }
@@ -223,7 +223,7 @@ public class AnalysisFunction {
      * @param head
      * @param list
      */
-    public static int OtherLetterFunction(char[] chars,int head,List list){
+    public static int OtherLetterFunction(char[] chars,int line,int head,List list){
         //对应机内码
         int judgeNum=0;
         //出错标识符
@@ -235,6 +235,8 @@ public class AnalysisFunction {
             judgeNum = InernalCode.getNum(judgeStr);
         } catch (Exception e) {
             //出错情况(符号不在给出的单词表中)，请孙天宇同学添加非法字符错误
+            WrongList wrong = new WrongList(line,"出现非法字符,非法字符为"+judgeStr);
+            wrongLists.add(wrong);
             err=true;
         }
         //没出错
