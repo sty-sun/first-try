@@ -2,6 +2,8 @@ import Lexical_analyzer.AnalysisFunction;
 import Lexical_analyzer.List;
 import Lexical_analyzer.Symble;
 import Lexical_analyzer.Token;
+import Purpose_code_generator.Generator;
+import Syntax_and_Semantic_Analyzer.EQU;
 import Syntax_and_Semantic_Analyzer.Parser;
 import Syntax_and_Semantic_Analyzer.Variable_stack;
 
@@ -42,5 +44,8 @@ public class Main {
         parser.runParser(list);
         System.out.println("--------------------------------");
         parser.prinVList();
+        ArrayList<EQU> Elist = new ArrayList<EQU>();
+        Generator generator = new Generator();
+        generator.Scan(Elist,list);
     }
 }
