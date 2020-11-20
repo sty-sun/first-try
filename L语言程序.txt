@@ -1,4 +1,5 @@
 var
     a:integer;
 begin
+    b = 18;
 end
