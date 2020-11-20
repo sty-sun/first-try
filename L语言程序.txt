@@ -1,4 +1,4 @@
 var
-    a,b:integer;
-    c:real;
-    d:bool;
+    a:integer;
+begin
+end

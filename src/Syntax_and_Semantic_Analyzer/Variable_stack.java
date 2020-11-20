@@ -42,8 +42,8 @@ public class Variable_stack {
     public String toString() {
         return "Variable_stack{" +
                 "IdName=" + idName +
-                ", Type'" + type +
-                ", offset" + offset +
+                ", Type:" + type +
+                ", offset=" + offset +
                 '}';
     }
 }

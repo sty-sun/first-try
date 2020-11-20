@@ -17,7 +17,6 @@ public class Parser {
             return true;
         }
         else{
-            System.out.println("程序已经运行到头了");
             return false;
         }
     }
@@ -26,12 +25,18 @@ public class Parser {
         size = list.tokens.size();
         Token token = new Token();
         token = list.tokens.get(tokenNum);
-        System.out.println(token.toString());
         if (token.getName().equals("var")){
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 Declear(list);
             }
+        }
+        tokenNum++;
+        if (IndexJudge(tokenNum)){
+            token = list.tokens.get(tokenNum);
+        }
+        else{
+            System.out.println("程序到头了");
         }
         if (!token.getName().equals("begin")){
             System.out.println("缺少begin");
@@ -49,6 +54,10 @@ public class Parser {
             if (IndexJudge(tokenNum)) {
                 token = list.tokens.get(tokenNum);
             }
+            else {
+                System.out.println("程序已经到头了");
+                break;
+            }
             if (token.getName().equals(";")){
                 tokenNum++;
                 if (IndexJudge(tokenNum)) {
@@ -65,7 +74,9 @@ public class Parser {
     public void D_Declear(List list){
         //读入变量声明语句的第一个变量
         Token token = new Token();
-        token = list.tokens.get(tokenNum);
+        if (IndexJudge(tokenNum)) {
+            token = list.tokens.get(tokenNum);
+        }
         //判断第一个读入的token是否为标识符，进行匹配
         if (token.getCode() == 18){
             int begin = offset;
@@ -83,6 +94,7 @@ public class Parser {
                 if (IndexJudge(tokenNum)) {
                     token = list.tokens.get(tokenNum);
                 }
+
                 Variable_stack variable_stack1 = new Variable_stack();
                 variable_stack1.setIdName(token.getName());
                 vList.add(variable_stack1);
@@ -90,6 +102,9 @@ public class Parser {
                 tokenNum++;
                 if (IndexJudge(tokenNum)) {
                     token = list.tokens.get(tokenNum);
+                }
+                else{
+                    break;
                 }
             }
             //判断是否为冒号进行类型判断
