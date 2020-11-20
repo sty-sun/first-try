@@ -1,6 +1,4 @@
-begin
-    a +:=<> 3.15;
-    if (a=10) then
-        a = 30;
-        a = ?;
-end;
+var
+    a,b:integer;
+    c:real;
+    d:bool;

@@ -3,6 +3,7 @@ import Lexical_analyzer.List;
 import Lexical_analyzer.Symble;
 import Lexical_analyzer.Token;
 import Syntax_and_Semantic_Analyzer.Parser;
+import Syntax_and_Semantic_Analyzer.Variable_stack;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,5 +40,7 @@ public class Main {
         }
         Parser parser = new Parser();
         parser.runParser(list);
+        System.out.println("--------------------------------");
+        parser.prinVList();
     }
 }
