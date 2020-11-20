@@ -1,4 +1,6 @@
-var
-    a,b:integer;
-    c:real;
-    d:bool;
+begin
+    if a<b then
+        c:=2;
+    while a=c do
+    a:=a+c;
+end
