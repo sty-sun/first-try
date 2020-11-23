@@ -3,4 +3,5 @@ begin
         c:=2;
     while a=c do
     a:=a+c;
+    b = 18;
 end
