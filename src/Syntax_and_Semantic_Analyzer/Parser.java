@@ -31,19 +31,12 @@ public class Parser {
                 Declear(list);
             }
         }
-        tokenNum++;
-        if (IndexJudge(tokenNum)){
-            token = list.tokens.get(tokenNum);
-        }
-        else{
-            System.out.println("程序到头了");
-        }
-        if (!token.getName().equals("begin")){
+        if (!token.getName().equals("begin")) {
             System.out.println("缺少begin");
-        }
-        else{
+        } else {
             //begin
             S(list);
+
         }
     }
     public void Declear(List list) {
