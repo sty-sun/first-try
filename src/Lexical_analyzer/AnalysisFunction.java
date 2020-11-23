@@ -244,21 +244,21 @@ public class AnalysisFunction {
             //判断是否是两个符号
             //>=
             if (judgeStr.equals(">")){
-                if (chars[rear]=='='){
+                if (chars[rear+1]=='='){
                     rear++;
                     judgeStr+=chars[rear]+"";
                 }
             }
             //<=或<>
             if (judgeStr.equals("<")){
-                if (chars[rear]=='='||chars[rear]=='>'){
+                if (chars[rear+1]=='='||chars[rear+1]=='>'){
                     rear++;
                     judgeStr+=chars[rear]+"";
                 }
             }
             //:=
             if (judgeStr.equals(":")){
-                if (chars[rear]=='='){
+                if (chars[rear+1]=='='){
                     rear++;
                     judgeStr+=chars[rear]+"";
                 }
@@ -293,5 +293,6 @@ public class AnalysisFunction {
             }
         }
     }
-    
+
+
 }
