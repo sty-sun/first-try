@@ -100,7 +100,7 @@ public class Parser {
                 if (IndexJudge(tokenNum)) {
                     token = list.tokens.get(tokenNum);
                 }
-                //判断是否符合标准的类型（bool，integer，real）
+                //判断是否符合标准的类型（bool，integer，real），孙天宇
                 if (token.getCode() == 3 || token.getCode() == 9 || token.getCode() == 13) {
                     for (int i = begin; i < offset; i++) {
                         vList.get(i).setType(token.getName());
