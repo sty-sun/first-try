@@ -1,6 +1,9 @@
 var
-    a:integer
+    a:integer;
 begin
-    if a>b then
-    a:=12;
+    if a<b then
+        c:=2;
+    while a=c do
+    a:=a+c;
+    b = 18;
 end

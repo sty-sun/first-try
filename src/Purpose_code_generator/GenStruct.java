@@ -12,7 +12,7 @@ public class GenStruct {
     public GenStruct() {
     }
 
-    public GenStruct(int addr1, int addr2, int result) {
+    public GenStruct(int label,int addr1, int addr2, int result) {
         this.addr1 = addr1;
         this.addr2 = addr2;
         this.result = result;

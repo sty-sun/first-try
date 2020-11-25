@@ -1,12 +1,17 @@
 package Syntax_and_Semantic_Analyzer;
 
 public class EQU {
+    private int label;
     private int op;
     private int op1;
     private int op2;
     private int result;
 
     public EQU() {
+    }
+
+    public int getLabel() {
+        return label;
     }
 
     public int getOp() {
@@ -23,6 +28,10 @@ public class EQU {
 
     public int getResult() {
         return result;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
     }
 
     public void setOp(int op) {
