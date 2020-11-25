@@ -269,12 +269,13 @@ public class Parser {
             if (IndexJudge(tokenNum)) {
                 Place Fplace = F(list);
                 Place E1place = E1(list, Fplace);
-                equNum++;
+//                equNum++;
                 nextQuad();
                 equList.get(equNum).setOp(45);
                 equList.get(equNum).setOp1(outPlace.getAddress());
                 equList.get(equNum).setOp2(E1place.getAddress());
                 equList.get(equNum).setResult(place.getAddress());
+                equNum++;
                 return place;
             }
         } else {
@@ -312,12 +313,13 @@ public class Parser {
                 Gplace = G(list);
                 Place F1place;
                 F1place = F1(list, Gplace);
-                equNum++;
+//                equNum++;
                 nextQuad();
                 equList.get(equNum).setOp(41);
                 equList.get(equNum).setOp1(outPlace.getAddress());
                 equList.get(equNum).setOp2(F1place.getAddress());
                 equList.get(equNum).setResult(place.getAddress());
+                equNum++;
                 return place;
             }
         } else if (list.tokens.get(tokenNum).getCode() == 26) {
@@ -330,12 +332,13 @@ public class Parser {
                 Gplace = G(list);
                 Place F1place;
                 F1place = F1(list, Gplace);
-                equNum++;
+//                equNum++;
                 nextQuad();
                 equList.get(equNum).setOp(48);
                 equList.get(equNum).setOp1(outPlace.getAddress());
                 equList.get(equNum).setOp2(F1place.getAddress());
                 equList.get(equNum).setResult(place.getAddress());
+                equNum++;
                 return place;
             }
         } else {
@@ -493,15 +496,20 @@ public class Parser {
             TrueOrFalse trueOrFalse2;
             //E11.tof
             TrueOrFalse trueOrFalse11;
-            trueOrFalse11 = C(list);
-            trueOrFalse2 = B1(list, trueOrFalse11);
-            EtrueOrFalse.setTrueEqu(trueOrFalse1.getTrueEqu());
-            EtrueOrFalse.setTrueEqu(trueOrFalse2.getTrueEqu());
-            EtrueOrFalse.setFalseEqu(trueOrFalse2.getFalseEqu());
-            return EtrueOrFalse;
+            tokenNum++;
+            if (IndexJudge(tokenNum)){
+                trueOrFalse11 = C(list);
+                trueOrFalse2 = B1(list, trueOrFalse11);
+                EtrueOrFalse.setTrueEqu(trueOrFalse1.getTrueEqu());
+                EtrueOrFalse.setTrueEqu(trueOrFalse2.getTrueEqu());
+                EtrueOrFalse.setFalseEqu(trueOrFalse2.getFalseEqu());
+                return EtrueOrFalse;
+            }
+
         } else {
             return trueOrFalse1;
         }
+        return null;
     }
 
     /**
