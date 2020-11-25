@@ -14,6 +14,11 @@ public class EQU {
         return label;
     }
 
+
+    public void setLabel(int label) {
+        this.label = label;
+    }
+
     public int getOp() {
         return op;
     }
@@ -30,9 +35,6 @@ public class EQU {
         return result;
     }
 
-    public void setLabel(int label) {
-        this.label = label;
-    }
 
     public void setOp(int op) {
         this.op = op;
@@ -48,5 +50,16 @@ public class EQU {
 
     public void setResult(int result) {
         this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return "EQU{" +
+                "label=" + label +
+                ", op=" + op +
+                ", op1=" + op1 +
+                ", op2=" + op2 +
+                ", result=" + result +
+                '}';
     }
 }

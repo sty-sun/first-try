@@ -42,10 +42,13 @@ public class Main {
             System.out.println(symble.toString());
         }
         Parser parser = new Parser();
-        parser.runParser(list);
-        System.out.println("--------------------------------");
-        parser.prinVList();
         ArrayList<EQU> Elist = new ArrayList<EQU>();
+        System.out.println("--------------------------------");
+        Elist=parser.runParser(list);
+        for (EQU equ:Elist){
+            System.out.println(equ.toString());
+        }
+//        parser.prinVList();
         Generator generator = new Generator();
         generator.Scan(Elist,list);
         System.out.println("--------------------------------");
