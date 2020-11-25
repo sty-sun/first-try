@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public class Generator {
     public ArrayList<ObjectCode_Stack> objectCode_stacks = new ArrayList<ObjectCode_Stack>();
+    public Register bx = new Register(false,"bx");
+    public Register dx = new Register(false,"dx");
+
 
     /**
      * 扫描语法语义分析器生成的四元式，将其改造成目的代码生成器所需要的格式
@@ -124,9 +127,8 @@ public class Generator {
             }
             count++;
         }
+        Generate(GenStack,list);
     }
-    public Register bx = new Register(false,"bx");
-    public Register dx = new Register(false,"dx");
 
     /**
      * 寄存器分配策略
@@ -140,9 +142,11 @@ public class Generator {
             return "dx";
         }
         else {
-
+            bx.setName(Name);
+            return "bx";
         }
     }
+
     /**
      * 目标代码生成策略
      * @param genStacks
