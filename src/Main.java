@@ -3,6 +3,7 @@ import Lexical_analyzer.List;
 import Lexical_analyzer.Symble;
 import Lexical_analyzer.Token;
 import Purpose_code_generator.Generator;
+import Purpose_code_generator.ObjectCode_Stack;
 import Syntax_and_Semantic_Analyzer.EQU;
 import Syntax_and_Semantic_Analyzer.Parser;
 import Syntax_and_Semantic_Analyzer.Variable_stack;
@@ -47,5 +48,9 @@ public class Main {
         ArrayList<EQU> Elist = new ArrayList<EQU>();
         Generator generator = new Generator();
         generator.Scan(Elist,list);
+        System.out.println("--------------------------------");
+        for (ObjectCode_Stack objectCode_stack: generator.objectCode_stacks){
+            System.out.println(objectCode_stack.toString());
+        }
     }
 }
