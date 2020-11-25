@@ -106,6 +106,7 @@ public class Generator {
                     break;
                 }
             }
+            GenStack.add(genStruct);
             count++;
         }
         length = GenStack.size();
@@ -114,18 +115,31 @@ public class Generator {
             //代码序列的第一条语句是入口语句
             if (count == 0){
                 GenStack.get(count).setOut_port(1);
+                count++;
+                GenStack.get(count).setOut_port(1);
             }
             else {
                 //跳转指令跳转到的四元式是入口语句
                 if (equs.get(count).getOp()<=58&&equs.get(count).getOp()>=52){
                     int result = equs.get(count).getResult();
-                    GenStack.get(result).setOut_port(1);
-                    //跳转指令的下一条语句也是入口语句
+                    //最后的代码结尾是空的
+                    if (result < length) {
+                        GenStack.get(result).setOut_port(1);
+                        //跳转指令的下一条语句也是入口语句
+                    }
+                    else {
+                        count++;
+                        continue;
+                    }
                     count++;
-                    GenStack.get(count).setOut_port(1);
+                    if (count < length) {
+                        GenStack.get(count).setOut_port(1);
+                    }
+                }
+                else {
+                    count++;
                 }
             }
-            count++;
         }
         Generate(GenStack,list);
     }
@@ -136,13 +150,16 @@ public class Generator {
      */
     public String judgeRegisterName(String Name){
         if ( (!bx.isStatus()) || ((bx.isStatus())&&(bx.getName().equals(Name)))){
+            bx.setStatus(true);
             return "bx";
         }
         else if ((!dx.isStatus())|| ((dx.isStatus())&&(dx.getName().equals(Name)))){
+            dx.setStatus(true);
             return "dx";
         }
         else {
             bx.setName(Name);
+            bx.setStatus(true);
             return "bx";
         }
     }
@@ -158,13 +175,26 @@ public class Generator {
         while (count < length){
             //(op,left,right,object)
             //op
-            String str = genStacks.get(count).getOp().toString();
+            String str = String.valueOf(genStacks.get(count).getOp());
             //left
-            String leftName = list.symbles.get(genStacks.get(count).getAddr1()).getName();
+            String leftName;
+            int addr1 = genStacks.get(count).getAddr1();
+            if (addr1!=-1) {
+                leftName = list.symbles.get(addr1-1).getName();
+            }
+            else {
+                leftName = "null";
+            }
             //right
-            String rightName = list.symbles.get(genStacks.get(count).getAddr2()).getName();
-            //object
-            String objectName = list.symbles.get(genStacks.get(count).getResult()).getName();
+            String rightName;
+            int addr2 = genStacks.get(count).getAddr2();
+            if (addr2!=-1) {
+                rightName = list.symbles.get(addr2-1).getName();
+            }
+            else {
+                rightName = "null";
+            }
+
             switch (str){
                 //(:=,left,null,object)即
                 case ":=":{
@@ -175,6 +205,10 @@ public class Generator {
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
+                    //非跳转的情况，object为syble表里面新加的数字
+                    String objectName;
+                    int result = genStacks.get(count).getResult();
+                    objectName = list.symbles.get(result-1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
@@ -189,21 +223,24 @@ public class Generator {
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(add,r,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("ADD");
-                    objectCode_stack2.setOop(Oop);
+                    objectCode_stack2.setOp("add");
+                    objectCode_stack2.setOop("ax");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
+                    //非跳转的情况，object为syble表里面新加的数字
+                    String objectName;
+                    int result = genStacks.get(count).getResult();
+                    objectName = list.symbles.get(result-1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
-                    objectCode_stack3.setOp("Mov");
+                    objectCode_stack3.setOp("mov");
                     objectCode_stack3.setOop(objectName);
-                    objectCode_stack3.setSop(Oop);
+                    objectCode_stack3.setSop("ax");
                     objectCode_stacks.add(objectCode_stack3);
                     break;
                 }
@@ -222,6 +259,10 @@ public class Generator {
                     objectCode_stack2.setOop(Oop);
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
+                    //非跳转的情况，object为syble表里面新加的数字
+                    String objectName;
+                    int result = genStacks.get(count).getResult();
+                    objectName = list.symbles.get(result-1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -245,6 +286,10 @@ public class Generator {
                     objectCode_stack2.setOop(Oop);
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
+                    //非跳转的情况，object为syble表里面新加的数字
+                    String objectName;
+                    int result = genStacks.get(count).getResult();
+                    objectName = list.symbles.get(result-1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -268,6 +313,10 @@ public class Generator {
                     objectCode_stack2.setOop(Oop);
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
+                    //非跳转的情况，object为syble表里面新加的数字
+                    String objectName;
+                    int result = genStacks.get(count).getResult();
+                    objectName = list.symbles.get(result-1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -278,6 +327,8 @@ public class Generator {
                 }
                 //(j,null,null,object)
                 case "j":{
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
                     //(mov,r,object)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -289,110 +340,200 @@ public class Generator {
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("jmp");
                     objectCode_stack2.setOop(Oop);
+                    objectCode_stack2.setSop("null");
                     objectCode_stacks.add(objectCode_stack2);
                     break;
                 }
                 //(j<,left,right,object)
                 case "j<":{
-                    //(cmp,r1,r2)
+                    //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
-                    objectCode_stack1.setOp("cmp");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
-                    String Sop = judgeRegisterName(rightName);
-                    objectCode_stack1.setSop(Sop);
+                    objectCode_stack1.setOp("mov");
+                    String r1 = judgeRegisterName(leftName);
+                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
+                    //(mov r2,right)
+                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
+                    objectCode_stack2.setOp("mov");
+                    String r2 = judgeRegisterName(rightName);
+                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setSop(rightName);
+                    objectCode_stacks.add(objectCode_stack2);
+                    //(cmp,r1,r2)
+                    ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
+                    objectCode_stack3.setOp("cmp");
+                    objectCode_stack3.setOop(r1);
+                    objectCode_stack3.setSop(r2);
+                    objectCode_stacks.add(objectCode_stack3);
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
                     //(jl,object)
-                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("jl");
-                    objectCode_stack2.setOop(objectName);
-                    objectCode_stack2.setSop("null");
-                    objectCode_stacks.add(objectCode_stack2);
+                    ObjectCode_Stack objectCode_stack4 = new ObjectCode_Stack();
+                    objectCode_stack4.setOp("jl");
+                    objectCode_stack4.setOop(objectName);
+                    objectCode_stack4.setSop("null");
+                    objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
+                //(j<=,left,right,object)
                 case "j<=":{
-                    //(cmp,r1,r2)
+                    //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
-                    objectCode_stack1.setOp("cmp");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
-                    String Sop = judgeRegisterName(rightName);
-                    objectCode_stack1.setSop(Sop);
+                    objectCode_stack1.setOp("mov");
+                    String r1 = judgeRegisterName(leftName);
+                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
+                    //(mov r2,right)
+                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
+                    objectCode_stack2.setOp("mov");
+                    String r2 = judgeRegisterName(rightName);
+                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setSop(rightName);
+                    objectCode_stacks.add(objectCode_stack2);
+                    //(cmp,r1,r2)
+                    ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
+                    objectCode_stack3.setOp("cmp");
+                    objectCode_stack3.setOop(r1);
+                    objectCode_stack3.setSop(r2);
+                    objectCode_stacks.add(objectCode_stack3);
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
                     //(jle,object)
-                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("jle");
-                    objectCode_stack2.setOop(objectName);
-                    objectCode_stack2.setSop("null");
-                    objectCode_stacks.add(objectCode_stack2);
+                    ObjectCode_Stack objectCode_stack4 = new ObjectCode_Stack();
+                    objectCode_stack4.setOp("jle");
+                    objectCode_stack4.setOop(objectName);
+                    objectCode_stack4.setSop("null");
+                    objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
+                //(j>,left,right,object)
                 case "j>":{
-                    //(cmp,r1,r2)
+                    //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
-                    objectCode_stack1.setOp("cmp");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
-                    String Sop = judgeRegisterName(rightName);
-                    objectCode_stack1.setSop(Sop);
+                    objectCode_stack1.setOp("mov");
+                    String r1 = judgeRegisterName(leftName);
+                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
+                    //(mov r2,right)
+                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
+                    objectCode_stack2.setOp("mov");
+                    String r2 = judgeRegisterName(rightName);
+                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setSop(rightName);
+                    objectCode_stacks.add(objectCode_stack2);
+                    //(cmp,r1,r2)
+                    ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
+                    objectCode_stack3.setOp("cmp");
+                    objectCode_stack3.setOop(r1);
+                    objectCode_stack3.setSop(r2);
+                    objectCode_stacks.add(objectCode_stack3);
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
                     //(jg,object)
-                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("jg");
-                    objectCode_stack2.setOop(objectName);
-                    objectCode_stack2.setSop("null");
-                    objectCode_stacks.add(objectCode_stack2);
+                    ObjectCode_Stack objectCode_stack4 = new ObjectCode_Stack();
+                    objectCode_stack4.setOp("jg");
+                    objectCode_stack4.setOop(objectName);
+                    objectCode_stack4.setSop("null");
+                    objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
+                //(j>=,left,right,object)
                 case "j>=":{
-                    //(cmp,r1,r2)
+                    //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
-                    objectCode_stack1.setOp("cmp");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
-                    String Sop = judgeRegisterName(rightName);
-                    objectCode_stack1.setSop(Sop);
+                    objectCode_stack1.setOp("mov");
+                    String r1 = judgeRegisterName(leftName);
+                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
+                    //(mov r2,right)
+                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
+                    objectCode_stack2.setOp("mov");
+                    String r2 = judgeRegisterName(rightName);
+                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setSop(rightName);
+                    objectCode_stacks.add(objectCode_stack2);
+                    //(cmp,r1,r2)
+                    ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
+                    objectCode_stack3.setOp("cmp");
+                    objectCode_stack3.setOop(r1);
+                    objectCode_stack3.setSop(r2);
+                    objectCode_stacks.add(objectCode_stack3);
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
                     //(jge,object)
-                    ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("jge");
-                    objectCode_stack2.setOop(objectName);
-                    objectCode_stack2.setSop("null");
-                    objectCode_stacks.add(objectCode_stack2);
+                    ObjectCode_Stack objectCode_stack4 = new ObjectCode_Stack();
+                    objectCode_stack4.setOp("jge");
+                    objectCode_stack4.setOop(objectName);
+                    objectCode_stack4.setSop("null");
+                    objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
+                //(j=,left,right,object)
                 case "j=":{
-                    //(cmp,r1,r2)
+                    //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
-                    objectCode_stack1.setOp("cmp");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
-                    String Sop = judgeRegisterName(rightName);
-                    objectCode_stack1.setSop(Sop);
+                    objectCode_stack1.setOp("mov");
+                    String r1 = judgeRegisterName(leftName);
+                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
-                    //(je,object)
+                    //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("je");
-                    objectCode_stack2.setOop(objectName);
-                    objectCode_stack2.setSop("null");
+                    objectCode_stack2.setOp("mov");
+                    String r2 = judgeRegisterName(rightName);
+                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
+                    //(cmp,r1,r2)
+                    ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
+                    objectCode_stack3.setOp("cmp");
+                    objectCode_stack3.setOop(r1);
+                    objectCode_stack3.setSop(r2);
+                    objectCode_stacks.add(objectCode_stack3);
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
+                    //(je,r)
+                    ObjectCode_Stack objectCode_stack4 = new ObjectCode_Stack();
+                    objectCode_stack4.setOp("je");
+                    objectCode_stack4.setOop(objectName);
+                    objectCode_stack4.setSop("null");
+                    objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
+                //(j<>,left,right,object)
                 case "j<>":{
-                    //(cmp,r1,r2)
+                    //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
-                    objectCode_stack1.setOp("cmp");
-                    String Oop = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(Oop);
-                    String Sop = judgeRegisterName(rightName);
-                    objectCode_stack1.setSop(Sop);
+                    objectCode_stack1.setOp("mov");
+                    String r1 = judgeRegisterName(leftName);
+                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
-                    //(jne,object)
+                    //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
-                    objectCode_stack2.setOp("jne");
-                    objectCode_stack2.setOop(objectName);
-                    objectCode_stack2.setSop("null");
+                    objectCode_stack2.setOp("mov");
+                    String r2 = judgeRegisterName(rightName);
+                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
+                    //(cmp,r1,r2)
+                    ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
+                    objectCode_stack3.setOp("cmp");
+                    objectCode_stack3.setOop(r1);
+                    objectCode_stack3.setSop(r2);
+                    objectCode_stacks.add(objectCode_stack3);
+                    //跳转的情况，object直接就是地址
+                    String objectName = String.valueOf(genStacks.get(count).getResult());
+                    //(jne,object)
+                    ObjectCode_Stack objectCode_stack4 = new ObjectCode_Stack();
+                    objectCode_stack4.setOp("jne");
+                    objectCode_stack4.setOop(objectName);
+                    objectCode_stack4.setSop("null");
+                    objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
                 default:{
@@ -400,6 +541,12 @@ public class Generator {
                 }
             }
             count++;
+        }
+    }
+    public void codePrint(){
+        int length = objectCode_stacks.size();
+        for (int i=0;i<length;i++){
+            System.out.println(objectCode_stacks.get(i).toString());
         }
     }
 }

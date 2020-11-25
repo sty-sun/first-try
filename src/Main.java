@@ -48,12 +48,13 @@ public class Main {
         for (EQU equ:Elist){
             System.out.println(equ.toString());
         }
-//        parser.prinVList();
+        System.out.println("--------------------------------");
+        for (Symble symble:list.symbles){
+            System.out.println(symble.toString());
+        }
         Generator generator = new Generator();
         generator.Scan(Elist,list);
         System.out.println("--------------------------------");
-        for (ObjectCode_Stack objectCode_stack: generator.objectCode_stacks){
-            System.out.println(objectCode_stack.toString());
-        }
+        generator.codePrint();
     }
 }

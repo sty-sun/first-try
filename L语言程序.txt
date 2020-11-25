@@ -1,5 +1,6 @@
 begin
     while a<c and b<d do
         if a=c then c:=c+1 else
-            while a<=d do a:=a+2;
+            while a<=d do
+                a := a+2;
 end

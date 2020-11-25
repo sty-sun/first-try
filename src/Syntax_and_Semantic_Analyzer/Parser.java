@@ -162,7 +162,7 @@ public class Parser {
                     if (list.tokens.get(tokenNum).getCode() == 14) {
                         //then
                         int m = equNum;
-                        backPatch(trueOrFalse.getTrueEqu(), m+100);
+                        backPatch(trueOrFalse.getTrueEqu(), m);
                         tokenNum++;
                         if (IndexJudge(tokenNum)) {
                             //S1.next
@@ -189,8 +189,8 @@ public class Parser {
                         if (IndexJudge(tokenNum)) {
                             //S1.next
                             TrueOrFalse next1 = S(list);
-                            backPatch(next1.getTrueEqu(), m1+100);
-                            backPatch(trueOrFalse.getTrueEqu(), m2+100);
+                            backPatch(next1.getTrueEqu(), m1);
+                            backPatch(trueOrFalse.getTrueEqu(), m2);
                             Snext.setTrueEqu(trueOrFalse.getFalseEqu());
                             //j,_,_,M1.quad
                             nextQuad();
@@ -424,7 +424,7 @@ public class Parser {
             equList.get(equNum).setResult(0);
             equNum++;
             int m2 = equNum;
-            backPatch(trueOrFalse.getFalseEqu(), m2+100);
+            backPatch(trueOrFalse.getFalseEqu(), m2);
             //S2.next
             tokenNum++;
             if (IndexJudge(tokenNum)){
@@ -453,7 +453,7 @@ public class Parser {
             //;
             tokenNum++;
             int m = equNum;
-            backPatch(Lnext.getTrueEqu(), m+100);
+            backPatch(Lnext.getTrueEqu(), m);
             if (IndexJudge(tokenNum)) {
                 Lnext = L(list);
                 return Lnext;
@@ -488,7 +488,7 @@ public class Parser {
             TrueOrFalse EtrueOrFalse = new TrueOrFalse();
             //11 or
             int m = equNum;
-            backPatch(trueOrFalse1.getFalseEqu(), m+100);
+            backPatch(trueOrFalse1.getFalseEqu(), m);
             //E2.tof
             TrueOrFalse trueOrFalse2;
             //E11.tof
@@ -530,7 +530,7 @@ public class Parser {
             //E.trueorfalse
             TrueOrFalse ETrueOrFalse = new TrueOrFalse();
             int m = equNum;
-            backPatch(trueOrFalse1.getTrueEqu(), m+100);
+            backPatch(trueOrFalse1.getTrueEqu(), m);
             //E11.trueorfalse
             tokenNum++;
             if (IndexJudge(tokenNum)){
@@ -754,6 +754,7 @@ public class Parser {
 
     public static void newTmep(List list, Place place) {
         String temp = "T" + tempNum;
+        tempNum++;
         symNum++;
         Symble symble = new Symble();
         symble.setName(temp);

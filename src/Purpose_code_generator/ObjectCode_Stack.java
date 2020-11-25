@@ -34,17 +34,15 @@ public class ObjectCode_Stack {
 
     @Override
     public String toString(){
-        if (!op.equals("jmp")) {
-            return "ObjectCode_Stack{" +
-                    " " + op +
-                    "  " + Oop +
-                    " , " + Sop +
-                    '}';
+        String str ="ObjectCode_Stack("+op+" ";
+        if (!Oop.equals("null")){
+            str += Oop;
         }
-        else {
-            return "ObjectCode_Stack{" +
-                    " " + op +
-                    "  " + Oop;
+        str += ' ';
+        if (!Sop.equals("null")){
+            str += Sop;
         }
+        str += ')';
+        return str;
     }
 }
