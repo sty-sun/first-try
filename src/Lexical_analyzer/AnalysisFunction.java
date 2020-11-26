@@ -84,21 +84,42 @@ public class AnalysisFunction {
         } catch (Exception e) {
             //是标识符
             //symble
+            //判断是否在symbol表中
+            boolean exist=false;
             Symble symble=new Symble();
-            symble.setNumber(symbleNum);
-            symble.setName(judgeStr);
-            //18为标识符
-            symble.setType(18);
-            list.symbles.add(symble);
-            //token
-            Token token=new Token();
-            token.setLabel(tokenNum);
-            tokenNum++;
-            token.setName(judgeStr);
-            token.setCode(18);
-            token.setAddress(symbleNum);
-            symbleNum++;
-            list.tokens.add(token);
+            for (Symble item:list.symbles){
+                if (item.getName().equals(judgeStr)){
+                    exist=true;
+                    symble=item;
+                    break;
+                }
+            }
+            if (exist){
+                //标识符已经存在
+                //token
+                Token token=new Token();
+                token.setLabel(tokenNum);
+                tokenNum++;
+                token.setName(judgeStr);
+                token.setCode(18);
+                token.setAddress(symble.getNumber());
+                list.tokens.add(token);
+            }else {
+                symble.setNumber(symbleNum);
+                symble.setName(judgeStr);
+                //18为标识符
+                symble.setType(18);
+                list.symbles.add(symble);
+                //token
+                Token token=new Token();
+                token.setLabel(tokenNum);
+                tokenNum++;
+                token.setName(judgeStr);
+                token.setCode(18);
+                token.setAddress(symbleNum);
+                symbleNum++;
+                list.tokens.add(token);
+            }
         }
         if (judgeNum!=0){
             //是关键字
@@ -187,33 +208,66 @@ public class AnalysisFunction {
         }
         //Symble
         Symble symble = new Symble();
-        symble.setNumber(symbleNum);
         //Token
         Token token = new Token();
-        token.setLabel(tokenNum);
-        token.setAddress(symbleNum);
+        boolean exist=false;
         if (flagPoint == false){
             //判断该数为整数
             int number = Integer.parseInt(string);
             string = String.copyValueOf(chars, circle, num - circle);
-            symble.setName(string);
-            symble.setType(19);
-            token.setName(string);
-            token.setCode(19);
+            //判断是否已经存在symbol表中
+            for (Symble item:list.symbles){
+                if (string.equals(item.getName())){
+                    exist=true;
+                    symble=item;
+                    break;
+                }
+            }
+            if (exist){
+                //已经存在
+
+            }else {
+                symble.setName(string);
+                symble.setNumber(symbleNum);
+                symble.setType(19);
+                list.symbles.add(symble);
+                token.setName(string);
+                token.setCode(19);
+                token.setAddress(symble.getNumber());
+                token.setLabel(tokenNum);
+                tokenNum++;
+                symbleNum++;
+                list.tokens.add(token);
+            }
         }
         else {
             //判断该数为小数
             double number = Double.parseDouble(string);
             string = String.copyValueOf(chars, circle, num - circle);
-            symble.setName(string);
-            symble.setType(20);
-            token.setName(string);
-            token.setCode(20);
+            for (Symble item:list.symbles){
+                if (string.equals(item.getName())){
+                    exist=true;
+                    symble=item;
+                    break;
+                }
+            }
+            if (exist){
+                //已经存在
+
+            }else {
+                symble.setName(string);
+                symble.setNumber(symbleNum);
+                symble.setType(19);
+                list.symbles.add(symble);
+                token.setName(string);
+                token.setCode(19);
+                token.setAddress(symble.getNumber());
+                token.setLabel(tokenNum);
+                tokenNum++;
+                symbleNum++;
+                list.tokens.add(token);
+            }
         }
-        symbleNum++;
-        tokenNum++;
-        list.symbles.add(symble);
-        list.tokens.add(token);
         return i-1;
     }
 

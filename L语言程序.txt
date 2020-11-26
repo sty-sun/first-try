@@ -1,8 +1,6 @@
 begin
-    while a<c or a>d and b<d or d>c do
-        if a=c or a=b then c:=c+1 else
-            while a<=d do
-                a := a*a*a*a*a+a*a+(a-a);
-    if a>c or a<d then
-        a:=a+c-d*c/d
+    if (a>c) then x:=x+1 else x:=4*(x-1);
+    while  a<c and b<d do
+        if a=b then c:=c+1 else
+            while a<=d do a:=a+2;
 end

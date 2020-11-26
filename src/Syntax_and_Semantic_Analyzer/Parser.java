@@ -47,7 +47,7 @@ public class Parser {
 
     public void Declear(List list) {
         Token token = new Token();
-        if (IndexJudge(tokenNum)){
+        if (IndexJudge(tokenNum)) {
             token = list.tokens.get(tokenNum);
         }
         while (!token.getName().equals("begin")) {
@@ -248,11 +248,11 @@ public class Parser {
         if (list.tokens.get(tokenNum).getCode() == 23) {
             //+
             Place place = new Place();
-            newTmep(list, place);
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 Place Fplace = F(list);
                 Place E1place = E1(list, Fplace);
+                newTemp(list, place);
                 nextQuad();
                 equList.get(equNum).setOp(43);
                 equList.get(equNum).setOp1(outPlace.getAddress());
@@ -264,11 +264,12 @@ public class Parser {
         } else if (list.tokens.get(tokenNum).getCode() == 24) {
             //-
             Place place = new Place();
-            newTmep(list, place);
+
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 Place Fplace = F(list);
                 Place E1place = E1(list, Fplace);
+                newTemp(list, place);
 //                equNum++;
                 nextQuad();
                 equList.get(equNum).setOp(45);
@@ -305,7 +306,6 @@ public class Parser {
     private static Place F1(List list, Place outPlace) {
         if (list.tokens.get(tokenNum).getCode() == 25) {
             Place place = new Place();
-            newTmep(list, place);
             //*
             tokenNum++;
             if (IndexJudge(tokenNum)) {
@@ -313,6 +313,7 @@ public class Parser {
                 Gplace = G(list);
                 Place F1place;
                 F1place = F1(list, Gplace);
+                newTemp(list, place);
 //                equNum++;
                 nextQuad();
                 equList.get(equNum).setOp(41);
@@ -325,13 +326,13 @@ public class Parser {
         } else if (list.tokens.get(tokenNum).getCode() == 26) {
             //除/
             Place place = new Place();
-            newTmep(list, place);
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 Place Gplace;
                 Gplace = G(list);
                 Place F1place;
                 F1place = F1(list, Gplace);
+                newTemp(list, place);
 //                equNum++;
                 nextQuad();
                 equList.get(equNum).setOp(48);
@@ -360,14 +361,11 @@ public class Parser {
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 place = E(list);
-                tokenNum++;
-                if (IndexJudge(tokenNum)) {
-                    if (list.tokens.get(tokenNum).getCode() == 22) {
-                        //右括号
-                        tokenNum++;
-                        if (IndexJudge(tokenNum)) {
-                            return place;
-                        }
+                if (list.tokens.get(tokenNum).getCode() == 22) {
+                    //右括号
+                    tokenNum++;
+                    if (IndexJudge(tokenNum)) {
+                        return place;
                     }
                 }
             }
@@ -424,13 +422,13 @@ public class Parser {
             equList.get(equNum).setOp(52);
             equList.get(equNum).setOp1(-1);
             equList.get(equNum).setOp2(-1);
-            equList.get(equNum).setResult(0);
+            equList.get(equNum).setResult(-1);
             equNum++;
             int m2 = equNum;
             backPatch(trueOrFalse.getFalseEqu(), m2);
             //S2.next
             tokenNum++;
-            if (IndexJudge(tokenNum)){
+            if (IndexJudge(tokenNum)) {
                 TrueOrFalse next2 = S(list);
                 Snext.setTrueEqu(n);
                 Snext.setTrueEqu(next2.getTrueEqu());
@@ -497,7 +495,7 @@ public class Parser {
             //E11.tof
             TrueOrFalse trueOrFalse11;
             tokenNum++;
-            if (IndexJudge(tokenNum)){
+            if (IndexJudge(tokenNum)) {
                 trueOrFalse11 = C(list);
                 trueOrFalse2 = B1(list, trueOrFalse11);
                 EtrueOrFalse.setTrueEqu(trueOrFalse1.getTrueEqu());
@@ -541,7 +539,7 @@ public class Parser {
             backPatch(trueOrFalse1.getTrueEqu(), m);
             //E11.trueorfalse
             tokenNum++;
-            if (IndexJudge(tokenNum)){
+            if (IndexJudge(tokenNum)) {
                 TrueOrFalse trueOrFalse11 = D(list);
                 TrueOrFalse trueOrFalse2 = C1(list, trueOrFalse11);
                 //E.true=E2.true
@@ -596,7 +594,7 @@ public class Parser {
             nextQuad();
             int tempNum = equNum;
             equList.get(equNum).setOp(52);
-            equList.get(equNum).setResult(0);
+            equList.get(equNum).setResult(-1);
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 return trueOrFalse;
@@ -608,7 +606,7 @@ public class Parser {
             int tempNum = equNum;
             nextQuad();
             equList.get(equNum).setOp(52);
-            equList.get(equNum).setResult(0);
+            equList.get(equNum).setResult(-1);
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 return trueOrFalse;
@@ -619,7 +617,7 @@ public class Parser {
             trueOrFalse.setTrueEqu(equNum);
             nextQuad();
             equList.get(equNum).setOp1(list.tokens.get(tokenNum).getAddress());
-            equList.get(equNum).setResult(0);
+            equList.get(equNum).setResult(-1);
             tokenNum++;
             if (IndexJudge(tokenNum)) {
                 trueOrFalse = Y(list, trueOrFalse);
@@ -631,16 +629,15 @@ public class Parser {
             if (IndexJudge(tokenNum)) {
                 TrueOrFalse trueOrFalse = new TrueOrFalse();
                 trueOrFalse = B(list);
-                tokenNum++;
-                if (IndexJudge(tokenNum)) {
-                    if (list.tokens.get(tokenNum).getCode() == 22) {
-                        //22 右括号)
+                if (list.tokens.get(tokenNum).getCode() == 22) {
+                    //22 右括号)
+                    tokenNum++;
+                    if (IndexJudge(tokenNum)) {
                         return trueOrFalse;
-                    } else {
-                        //报错
                     }
+                } else {
+                    //报错
                 }
-
             }
 
         }
@@ -666,7 +663,7 @@ public class Parser {
             equList.get(equNum).setOp(52);
             equList.get(equNum).setOp1(-1);
             equList.get(equNum).setOp2(-1);
-            equList.get(equNum).setResult(0);
+            equList.get(equNum).setResult(-1);
             equNum++;
             return trueOrFalse;
         } else {
@@ -740,7 +737,7 @@ public class Parser {
             equList.get(equNum).setOp(52);
             equList.get(equNum).setOp1(-1);
             equList.get(equNum).setOp2(-1);
-            equList.get(equNum).setResult(0);
+            equList.get(equNum).setResult(-1);
             equNum++;
             return trueOrFalse;
         }
@@ -760,7 +757,7 @@ public class Parser {
         }
     }
 
-    public static void newTmep(List list, Place place) {
+    public static void newTemp(List list, Place place) {
         String temp = "T" + tempNum;
         tempNum++;
         symNum++;
