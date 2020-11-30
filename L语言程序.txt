@@ -2,5 +2,5 @@ begin
     if (a>c) then x:=x+1 else x:=4*(x-1);
     while  a<c and b<d do
         if a=b then c:=c+1 else
-            while a<=d do a:=a+2;
+            while a<=d do a:=a+1;
 end

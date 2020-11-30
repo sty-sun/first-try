@@ -225,7 +225,12 @@ public class AnalysisFunction {
             }
             if (exist){
                 //已经存在
-
+                token.setName(string);
+                token.setCode(19);
+                token.setAddress(symble.getNumber());
+                token.setLabel(tokenNum);
+                tokenNum++;
+                list.tokens.add(token);
             }else {
                 symble.setName(string);
                 symble.setNumber(symbleNum);
@@ -253,7 +258,12 @@ public class AnalysisFunction {
             }
             if (exist){
                 //已经存在
-
+                token.setName(string);
+                token.setCode(19);
+                token.setAddress(symble.getNumber());
+                token.setLabel(tokenNum);
+                tokenNum++;
+                list.tokens.add(token);
             }else {
                 symble.setName(string);
                 symble.setNumber(symbleNum);
