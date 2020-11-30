@@ -21,7 +21,8 @@ public class aValue {
         this.name = name;
     }
 
-    public void setLocation(ArrayList<String> location) {
-        this.location = location;
+    public void setLocation(String name) {
+        location = new ArrayList<>();
+        location.add(name);
     }
 }

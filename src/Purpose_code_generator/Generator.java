@@ -33,6 +33,13 @@ public class Generator {
                 infos.add(info);
             }
         }
+        //aValue数组赋初值
+        for (int i=0;i<symbles1.size();i++){
+            aValue aValue1 = new aValue();
+            aValue1.setName(symbles1.get(i).getName());
+            aValue1.setLocation(symbles1.get(i).getName());
+            aValues.add(aValue1);
+        }
         int circle = equs.size()-1;
         //(op,op1,op2,result) ---> (left,right,result)
         while (circle>=0) {
@@ -213,7 +220,7 @@ public class Generator {
                 }
             }
         }
-        Generate(GenStack, list);
+        Generate(GenStack, list , equs);
     }
 
     /**
@@ -225,23 +232,25 @@ public class Generator {
     public String judgeRegisterName(EQU equ, ArrayList<Symble> symbles) {
         //删除掉op1和op2的最后一个待用信息
         for (Info info : infos) {
-            if (symbles.get(equ.getOp1()).getName().equals(info.getName()) && info.getLocation().get(info.getLocation().size()) != -1) {
-                info.getLocation().remove(info.getLocation().size());
+            if (symbles.get(equ.getOp1()-1).getName().equals(info.getName()) && info.getLocation().get(info.getLocation().size()-1) != -1) {
+                info.getLocation().remove(info.getLocation().size()-1);
                 break;
             }
         }
-        for (Info info : infos) {
-            if (symbles.get(equ.getOp2()).getName().equals(info.getName()) && info.getLocation().get(info.getLocation().size()) != -1) {
-                info.getLocation().remove(info.getLocation().size());
-                break;
+        if (equ.getOp2()!=-1) {
+            for (Info info : infos) {
+                if (symbles.get(equ.getOp2()-1).getName().equals(info.getName()) && info.getLocation().get(info.getLocation().size() - 1) != -1) {
+                    info.getLocation().remove(info.getLocation().size() - 1);
+                    break;
+                }
             }
         }
         //分配寄存器
-        if ((!bx.isStatus()) || ((bx.isStatus()) && (bx.getName().equals(symbles.get(equ.getOp1()).getName())))) {
+        if ((!bx.isStatus()) || ((bx.isStatus()) && (bx.getName().equals(symbles.get(equ.getOp1()-1).getName())))) {
             bx.setStatus(true);
             bx.setName(symbles.get(equ.getResult()).getName());
             return "bx";
-        } else if ((!dx.isStatus()) || ((dx.isStatus()) && (dx.getName().equals(symbles.get(equ.getOp1()).getName())))) {
+        } else if ((!dx.isStatus()) || ((dx.isStatus()) && (dx.getName().equals(symbles.get(equ.getOp1()-1).getName())))) {
             dx.setStatus(true);
             bx.setName(symbles.get(equ.getResult()).getName());
             return "dx";
@@ -254,13 +263,13 @@ public class Generator {
             int dxRef = 0;
             for (Info info : infos) {
                 if (info.getName().equals(bx.getName())) {
-                    bxRef = info.getLocation().get(info.getLocation().size());
+                    bxRef = info.getLocation().get(info.getLocation().size()-1);
                     break;
                 }
             }
             for (Info info : infos) {
                 if (info.getName().equals(dx.getName())) {
-                    dxRef = info.getLocation().get(info.getLocation().size());
+                    dxRef = info.getLocation().get(info.getLocation().size()-1);
                     break;
                 }
             }
@@ -320,6 +329,7 @@ public class Generator {
                 return register;
             }
             if (dxRef==-1){
+                System.out.println(equ.toString());
                 dx.setName(symbles.get(equ.getResult()).getName());
                 boolean exit=false;
                 for (String m:rValueDx){
@@ -492,10 +502,11 @@ public class Generator {
      * @param genStacks
      * @param list
      */
-    public void Generate(ArrayList<GenStruct> genStacks,List list){
+    public void Generate(ArrayList<GenStruct> genStacks,List list,ArrayList<EQU> equs){
         int length = genStacks.size();
         int count = 0;
         while (count < length) {
+            EQU equ = equs.get(count);
             //label (op,left,right,object)
             int label = genStacks.get(count).getLabel();
             //op
@@ -530,7 +541,7 @@ public class Generator {
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String Oop = judgeRegisterName(leftName);
+                    String Oop = judgeRegisterName(equ, list.symbles);
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
@@ -542,8 +553,7 @@ public class Generator {
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
                     objectCode_stack2.setOop(objectName);
-                    String Sop = judgeRegisterName(objectName);
-                    objectCode_stack2.setSop(Sop);
+                    objectCode_stack2.setSop(Oop);
                     objectCode_stacks.add(objectCode_stack2);
                     break;
                 }
@@ -592,7 +602,7 @@ public class Generator {
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String Oop = judgeRegisterName(leftName);
+                    String Oop = judgeRegisterName(equ, list.symbles);
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
@@ -626,7 +636,7 @@ public class Generator {
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String Oop = judgeRegisterName(leftName);
+                    String Oop = judgeRegisterName(equ, list.symbles);
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
@@ -660,7 +670,7 @@ public class Generator {
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String Oop = judgeRegisterName(leftName);
+                    String Oop = judgeRegisterName(equ, list.symbles);
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
@@ -693,17 +703,17 @@ public class Generator {
                     objectCode_stacks.add(objectCode_stack);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
-                    //(mov,r,object)
+                    /*//(mov,r,object)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String Oop = judgeRegisterName(leftName);
+                    String Oop = judgeRegisterName(equ, list.symbles);
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(objectName);
-                    objectCode_stacks.add(objectCode_stack1);
-                    //(jmp ax)
+                    objectCode_stacks.add(objectCode_stack1);*/
+                    //(jmp object)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("jmp");
-                    objectCode_stack2.setOop(Oop);
+                    objectCode_stack2.setOop(objectName);
                     objectCode_stack2.setSop("null");
                     objectCode_stacks.add(objectCode_stack2);
                     break;
@@ -720,22 +730,20 @@ public class Generator {
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String r1 = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
-                    String r2 = judgeRegisterName(rightName);
-                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setOop("cx");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
                     //(cmp,r1,r2)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("cmp");
-                    objectCode_stack3.setOop(r1);
-                    objectCode_stack3.setSop(r2);
+                    objectCode_stack3.setOop("ax");
+                    objectCode_stack3.setSop("cx");
                     objectCode_stacks.add(objectCode_stack3);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
@@ -759,22 +767,20 @@ public class Generator {
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String r1 = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
-                    String r2 = judgeRegisterName(rightName);
-                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setOop("cx");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
                     //(cmp,r1,r2)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("cmp");
-                    objectCode_stack3.setOop(r1);
-                    objectCode_stack3.setSop(r2);
+                    objectCode_stack3.setOop("ax");
+                    objectCode_stack3.setSop("cx");
                     objectCode_stacks.add(objectCode_stack3);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
@@ -798,22 +804,20 @@ public class Generator {
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String r1 = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
-                    String r2 = judgeRegisterName(rightName);
-                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setOop("cx");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
                     //(cmp,r1,r2)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("cmp");
-                    objectCode_stack3.setOop(r1);
-                    objectCode_stack3.setSop(r2);
+                    objectCode_stack3.setOop("ax");
+                    objectCode_stack3.setSop("cx");
                     objectCode_stacks.add(objectCode_stack3);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
@@ -837,22 +841,20 @@ public class Generator {
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String r1 = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
-                    String r2 = judgeRegisterName(rightName);
-                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setOop("cx");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
                     //(cmp,r1,r2)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("cmp");
-                    objectCode_stack3.setOop(r1);
-                    objectCode_stack3.setSop(r2);
+                    objectCode_stack3.setOop("ax");
+                    objectCode_stack3.setSop("cx");
                     objectCode_stacks.add(objectCode_stack3);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
@@ -876,22 +878,20 @@ public class Generator {
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String r1 = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
-                    String r2 = judgeRegisterName(rightName);
-                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setOop("cx");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
                     //(cmp,r1,r2)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("cmp");
-                    objectCode_stack3.setOop(r1);
-                    objectCode_stack3.setSop(r2);
+                    objectCode_stack3.setOop("ax");
+                    objectCode_stack3.setSop("cx");
                     objectCode_stacks.add(objectCode_stack3);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
@@ -915,22 +915,20 @@ public class Generator {
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
-                    String r1 = judgeRegisterName(leftName);
-                    objectCode_stack1.setOop(r1);
+                    objectCode_stack1.setOop("ax");
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
                     //(mov r2,right)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
-                    String r2 = judgeRegisterName(rightName);
-                    objectCode_stack2.setOop(r2);
+                    objectCode_stack2.setOop("cx");
                     objectCode_stack2.setSop(rightName);
                     objectCode_stacks.add(objectCode_stack2);
                     //(cmp,r1,r2)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("cmp");
-                    objectCode_stack3.setOop(r1);
-                    objectCode_stack3.setSop(r2);
+                    objectCode_stack3.setOop("ax");
+                    objectCode_stack3.setSop("cx");
                     objectCode_stacks.add(objectCode_stack3);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
