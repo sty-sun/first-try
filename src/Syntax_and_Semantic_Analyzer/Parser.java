@@ -35,7 +35,9 @@ public class Parser {
                 Declear(list);
             }
         }
-        token = list.tokens.get(tokenNum);
+        if (IndexJudge(tokenNum)) {
+            token = list.tokens.get(tokenNum);
+        }
         if (!token.getName().equals("begin")) {
             System.out.println("缺少begin");
         } else {

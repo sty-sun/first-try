@@ -1,6 +1,7 @@
 package Purpose_code_generator;
 
 import Lexical_analyzer.InernalCode;
+import Lexical_analyzer.Symble;
 import Lexical_analyzer.WrongList;
 import Syntax_and_Semantic_Analyzer.EQU;
 import Lexical_analyzer.List;
@@ -10,14 +11,29 @@ public class Generator {
     public ArrayList<ObjectCode_Stack> objectCode_stacks = new ArrayList<ObjectCode_Stack>();
     public Register bx = new Register(false,"bx");
     public Register dx = new Register(false,"dx");
-
-
+    public static ArrayList<String> rValueBx = new ArrayList<String>();
+    public static ArrayList<String> rValueDx = new ArrayList<String>();
+    public static ArrayList[] aValue;
+    public static int[] info;
     /**
      * 扫描语法语义分析器生成的四元式，将其改造成目的代码生成器所需要的格式
      * @param equs
      * @param list
      */
-    public void Scan(ArrayList<EQU> equs,List list){
+    public void Scan(ArrayList<EQU> equs, List list, ArrayList<Symble> symbles){
+        ArrayList<Symble> symbles1 = new ArrayList<>();
+        for (int i=0;i<symbles.size();i++){
+            if (symbles.get(i).getType()==18){
+                symbles1.add(symbles.get(i));
+            }
+        }
+        //aValue初始化
+        aValue = new ArrayList[symbles1.size()];
+        for (int i=0;i<aValue.length;i++){
+            aValue[i].add(symbles1.get(i).getName());
+        }
+        //info初始化
+        info = new int[symbles1.size()];
         ArrayList<GenStruct> GenStack = new ArrayList<GenStruct>();
         int length = equs.size();
         int count = 0;
@@ -111,6 +127,7 @@ public class Generator {
         }
         length = GenStack.size();
         count = 0;
+        //入口置一
         while (count<length){
             //代码序列的第一条语句是入口语句
             if (count == 0){
@@ -173,7 +190,8 @@ public class Generator {
         int length = genStacks.size();
         int count = 0;
         while (count < length){
-            //(op,left,right,object)
+            //label (op,left,right,object)
+            int label = genStacks.get(count).getLabel();
             //op
             String str = String.valueOf(genStacks.get(count).getOp());
             //left
@@ -196,8 +214,15 @@ public class Generator {
             }
 
             switch (str){
-                //(:=,left,null,object)即
+                //(:=,left,null,object)
                 case ":=":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -220,6 +245,13 @@ public class Generator {
                 }
                 //(+,left,right,object)
                 case "+":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -246,6 +278,13 @@ public class Generator {
                 }
                 //(-,left,right,object)
                 case "-":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -273,6 +312,13 @@ public class Generator {
                 }
                 //(*,left,right,object)
                 case "*":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -300,6 +346,13 @@ public class Generator {
                 }
                 //(/,left,right,object)
                 case "/":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov,r,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -327,6 +380,13 @@ public class Generator {
                 }
                 //(j,null,null,object)
                 case "j":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //跳转的情况，object直接就是地址
                     String objectName = String.valueOf(genStacks.get(count).getResult());
                     //(mov,r,object)
@@ -346,6 +406,13 @@ public class Generator {
                 }
                 //(j<,left,right,object)
                 case "j<":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -378,6 +445,13 @@ public class Generator {
                 }
                 //(j<=,left,right,object)
                 case "j<=":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -410,6 +484,13 @@ public class Generator {
                 }
                 //(j>,left,right,object)
                 case "j>":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -442,6 +523,13 @@ public class Generator {
                 }
                 //(j>=,left,right,object)
                 case "j>=":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -474,6 +562,13 @@ public class Generator {
                 }
                 //(j=,left,right,object)
                 case "j=":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -506,6 +601,13 @@ public class Generator {
                 }
                 //(j<>,left,right,object)
                 case "j<>":{
+                    //lebel
+                    ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
+                    objectCode_stack.setLabel(label);
+                    objectCode_stack.setOp("null");
+                    objectCode_stack.setSop("null");
+                    objectCode_stack.setOop("null");
+                    objectCode_stacks.add(objectCode_stack);
                     //(mov r1,left)
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
@@ -544,6 +646,7 @@ public class Generator {
         }
     }
     public void codePrint(){
+        System.out.println("目标代码生成：");
         int length = objectCode_stacks.size();
         for (int i=0;i<length;i++){
             System.out.println(objectCode_stacks.get(i).toString());

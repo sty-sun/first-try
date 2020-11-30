@@ -34,6 +34,8 @@ public class Main {
         }
         AnalysisFunction analysisFunction=new AnalysisFunction();
         List list = analysisFunction.judge(readMap);
+        ArrayList<Symble> symbles = new ArrayList<>();
+        symbles = list.symbles;
         for (Token token:list.tokens){
             System.out.println(token.toString());
         }
@@ -53,7 +55,7 @@ public class Main {
             System.out.println(symble.toString());
         }
         Generator generator = new Generator();
-        generator.Scan(Elist,list);
+        generator.Scan(Elist,list,symbles);
         System.out.println("--------------------------------");
         generator.codePrint();
     }

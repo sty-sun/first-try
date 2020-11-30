@@ -1,11 +1,16 @@
 package Purpose_code_generator;
 
 public class ObjectCode_Stack {
+    private int label = 0;
     private String op;
     private String Oop;
     private String Sop;
 
     public ObjectCode_Stack() {
+    }
+
+    public int getLabel() {
+        return label;
     }
 
     public String getOp() {
@@ -18,6 +23,10 @@ public class ObjectCode_Stack {
 
     public String getSop() {
         return Sop;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
     }
 
     public void setOp(String op) {
@@ -34,15 +43,20 @@ public class ObjectCode_Stack {
 
     @Override
     public String toString(){
-        String str ="ObjectCode_Stack("+op+" ";
-        if (!Oop.equals("null")){
-            str += Oop;
+        if (label == 0) {
+            String str = "   (" + op + " ";
+            if (!Oop.equals("null")) {
+                str += Oop;
+            }
+            if (!Sop.equals("null")) {
+                str += ' ';
+                str += Sop;
+            }
+            str += ')';
+            return str;
         }
-        str += ' ';
-        if (!Sop.equals("null")){
-            str += Sop;
+        else{
+            return String.valueOf(label)+":";
         }
-        str += ')';
-        return str;
     }
 }
