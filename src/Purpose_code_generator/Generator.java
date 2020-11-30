@@ -23,13 +23,72 @@ public class Generator {
      * @param list
      */
     public void Scan(ArrayList<EQU> equs, List list, ArrayList<Symble> symbles){
+       //symbles1指的是symble表中去掉整数和实数的项之后形成的新表
         ArrayList<Symble> symbles1 = new ArrayList<>();
         for (int i=0;i<symbles.size();i++){
             if ((symbles.get(i).getType()==18)||(symbles.get(i).getType()==0)){
                 symbles1.add(symbles.get(i));
+                String name = symbles.get(i).getName();
+                Info info = new Info(name);
+                infos.add(info);
             }
         }
-
+        int circle = equs.size()-1;
+        //(op,op1,op2,result) ---> (left,right,result)
+        while (circle>=0) {
+            EQU equ = equs.get(circle);
+            int op = equ.getOp();
+            if ((op >= 52) && (op <= 58)) {
+                circle--;
+            }
+            else if (op<51){
+                //left
+                int left = equ.getOp1()-1;
+                String lName = symbles.get(left).getName();
+                //i代表的是该变量在info中的位置
+                for (int i = 0; i < symbles1.size(); i++) {
+                    if (symbles1.get(i).getName() == lName) {
+                        infos.get(i).getLocation().add(circle);
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                //right
+                int right = equ.getOp2()-1;
+                String rName = symbles.get(right).getName();
+                //i代表的是该变量在info中的位置
+                for (int i = 0; i < symbles1.size(); i++) {
+                    if (symbles1.get(i).getName() == rName) {
+                        infos.get(i).getLocation().add(circle);
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                circle--;
+            }
+            //(:=,a,-1,r)
+            else {
+                //left
+                int left = equ.getOp1()-1;
+                String lName = symbles.get(left).getName();
+                //i代表的是该变量在info中的位置
+                for (int i = 0; i < symbles1.size(); i++) {
+                    if (symbles1.get(i).getName() == lName) {
+                        infos.get(i).getLocation().add(circle);
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                circle--;
+            }
+        }
+        System.out.println("--------------------------------");
+        for (Info info:infos){
+            System.out.println(info.toString());
+        }
         ArrayList<GenStruct> GenStack = new ArrayList<GenStruct>();
         int length = equs.size();
         int count = 0;

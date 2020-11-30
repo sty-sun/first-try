@@ -1,7 +1,3 @@
-var
-    a,b:integer;
-    c:bool;
-    d:real;
 begin
     if (a>c) then x:=x+1 else x:=4*(x-1);
     while  a<c and b<d do
