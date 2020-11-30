@@ -1,8 +1,10 @@
 package Purpose_code_generator;
 
+import java.util.ArrayList;
+
 public class Info {
     private String name;
-    private int location;
+    private ArrayList<Integer> location;
 
     public Info() {
     }
@@ -11,15 +13,16 @@ public class Info {
         return name;
     }
 
-    public int getLocation() {
+    public ArrayList<Integer> getLocation() {
         return location;
+    }
+
+    public void setLocation(ArrayList<Integer> location) {
+        this.location = location;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setLocation(int location) {
-        this.location = location;
-    }
 }

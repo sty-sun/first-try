@@ -5,27 +5,30 @@ import Lexical_analyzer.Symble;
 import Lexical_analyzer.WrongList;
 import Syntax_and_Semantic_Analyzer.EQU;
 import Lexical_analyzer.List;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
 public class Generator {
     public ArrayList<ObjectCode_Stack> objectCode_stacks = new ArrayList<ObjectCode_Stack>();
-    public Register bx = new Register(false,"bx");
-    public Register dx = new Register(false,"dx");
+    public Register bx = new Register(false, "bx");
+    public Register dx = new Register(false, "dx");
     public static ArrayList<String> rValueBx = new ArrayList<String>();
     public static ArrayList<String> rValueDx = new ArrayList<String>();
     public static ArrayList<aValue> aValues = new ArrayList<aValue>();
     public static ArrayList<Info> infos = new ArrayList<>();
     //待用信息表
+
     /**
      * 扫描语法语义分析器生成的四元式，将其改造成目的代码生成器所需要的格式
+     *
      * @param equs
      * @param list
      */
-    public void Scan(ArrayList<EQU> equs, List list, ArrayList<Symble> symbles){
+    public void Scan(ArrayList<EQU> equs, List list, ArrayList<Symble> symbles) {
         ArrayList<Symble> symbles1 = new ArrayList<>();
-        for (int i=0;i<symbles.size();i++){
-            if ((symbles.get(i).getType()==18)||(symbles.get(i).getType()==0)){
+        for (int i = 0; i < symbles.size(); i++) {
+            if ((symbles.get(i).getType() == 18) || (symbles.get(i).getType() == 0)) {
                 symbles1.add(symbles.get(i));
             }
         }
@@ -34,87 +37,87 @@ public class Generator {
         int length = equs.size();
         int count = 0;
         //遍历一遍初始四元式并第一次初始化新四元式(初始化label，op1，op2，result)
-        while (count < length){
+        while (count < length) {
             EQU equ = new EQU();
             equ = equs.get(count);
-            GenStruct genStruct = new GenStruct(equ.getLabel(),equ.getOp1(), equ.getOp2(), equ.getResult());
+            GenStruct genStruct = new GenStruct(equ.getLabel(), equ.getOp1(), equ.getOp2(), equ.getResult());
             int op = equ.getOp();
             char[] chars = new char[4];
             String str = null;
-            switch (op){
-                case 51:{
+            switch (op) {
+                case 51: {
                     str = ":=";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 43:{
+                case 43: {
                     str = "+";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 45:{
+                case 45: {
                     str = "-";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 41:{
+                case 41: {
                     str = "*";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 48:{
+                case 48: {
                     str = "/";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 53:{
+                case 53: {
                     str = "j<";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 54:{
+                case 54: {
                     str = "j<=";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 57:{
+                case 57: {
                     str = "j>";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 58:{
+                case 58: {
                     str = "j>=";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 56:{
+                case 56: {
                     str = "j=";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 52:{
+                case 52: {
                     str = "j";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                case 55:{
+                case 55: {
                     str = "j<>";
                     chars = str.toCharArray();
                     genStruct.setOp(chars);
                     break;
                 }
-                default:{
+                default: {
                     break;
                 }
             }
@@ -124,23 +127,21 @@ public class Generator {
         length = GenStack.size();
         count = 0;
         //入口置一
-        while (count<length){
+        while (count < length) {
             //代码序列的第一条语句是入口语句
-            if (count == 0){
+            if (count == 0) {
                 GenStack.get(count).setOut_port(1);
                 count++;
                 GenStack.get(count).setOut_port(1);
-            }
-            else {
+            } else {
                 //跳转指令跳转到的四元式是入口语句
-                if (equs.get(count).getOp()<=58&&equs.get(count).getOp()>=52){
+                if (equs.get(count).getOp() <= 58 && equs.get(count).getOp() >= 52) {
                     int result = equs.get(count).getResult();
                     //最后的代码结尾是空的
                     if (result < length) {
                         GenStack.get(result).setOut_port(1);
                         //跳转指令的下一条语句也是入口语句
-                    }
-                    else {
+                    } else {
                         count++;
                         continue;
                     }
@@ -148,44 +149,294 @@ public class Generator {
                     if (count < length) {
                         GenStack.get(count).setOut_port(1);
                     }
-                }
-                else {
+                } else {
                     count++;
                 }
             }
         }
-        Generate(GenStack,list);
+        Generate(GenStack, list);
     }
 
     /**
      * 寄存器分配策略
-     * @param Name
+     * @param equ
+     * @param symbles
+     * @return
      */
-    public String judgeRegisterName(String Name){
-        if ( (!bx.isStatus()) || ((bx.isStatus())&&(bx.getName().equals(Name)))){
-            bx.setStatus(true);
-            return "bx";
+    public String judgeRegisterName(EQU equ, ArrayList<Symble> symbles) {
+        //删除掉op1和op2的最后一个待用信息
+        for (Info info : infos) {
+            if (symbles.get(equ.getOp1()).getName().equals(info.getName()) && info.getLocation().get(info.getLocation().size()) != -1) {
+                info.getLocation().remove(info.getLocation().size());
+                break;
+            }
         }
-        else if ((!dx.isStatus())|| ((dx.isStatus())&&(dx.getName().equals(Name)))){
+        for (Info info : infos) {
+            if (symbles.get(equ.getOp2()).getName().equals(info.getName()) && info.getLocation().get(info.getLocation().size()) != -1) {
+                info.getLocation().remove(info.getLocation().size());
+                break;
+            }
+        }
+        //分配寄存器
+        if ((!bx.isStatus()) || ((bx.isStatus()) && (bx.getName().equals(symbles.get(equ.getOp1()).getName())))) {
+            bx.setStatus(true);
+            bx.setName(symbles.get(equ.getResult()).getName());
+            return "bx";
+        } else if ((!dx.isStatus()) || ((dx.isStatus()) && (dx.getName().equals(symbles.get(equ.getOp1()).getName())))) {
             dx.setStatus(true);
+            bx.setName(symbles.get(equ.getResult()).getName());
             return "dx";
-        }
-        else {
-            bx.setName(Name);
-            bx.setStatus(true);
-            return "bx";
+        } else {
+            //寄存器都被分配了
+            String register = "";
+            //占用寄存器引用的位置最远
+            //bx和dx中变量引用位置
+            int bxRef = 0;
+            int dxRef = 0;
+            for (Info info : infos) {
+                if (info.getName().equals(bx.getName())) {
+                    bxRef = info.getLocation().get(info.getLocation().size());
+                    break;
+                }
+            }
+            for (Info info : infos) {
+                if (info.getName().equals(dx.getName())) {
+                    dxRef = info.getLocation().get(info.getLocation().size());
+                    break;
+                }
+            }
+            //后面不再使用直接分配
+            if (bxRef==-1){
+                bx.setName(symbles.get(equ.getResult()).getName());
+                boolean exit=false;
+                for (String m:rValueBx){
+                    //判断m是否在aValue中
+                    for (aValue value:aValues){
+                        //m在
+                        for (String m1:value.getLocation()){
+                            if (m1.equals(m)){
+                                exit=true;
+                                break;
+                            }
+                        }
+                        if (exit){
+                            break;
+                        }
+                    }
+                    if (m.equals(symbles.get(equ.getResult()).getName())){
+                        //m是A
+                        exit=true;
+                    }
+                    if (exit){
+                        //跳过
+                        continue;
+                    }else {
+                        //1
+                        System.out.println("MOV "+m+",bx");
+                        //2
+                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
+                            //m不是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    break;
+                                }
+                            }
+                        }else {
+                            //m是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    value.getLocation().add("bx");
+                                }
+                            }
+                        }
+                        //3
+                        rValueBx.remove(m);
+                    }
+                }
+                register="bx";
+                return register;
+            }
+            if (dxRef==-1){
+                dx.setName(symbles.get(equ.getResult()).getName());
+                boolean exit=false;
+                for (String m:rValueDx){
+                    //判断m是否在aValue中
+                    for (aValue value:aValues){
+                        //m在
+                        for (String m1:value.getLocation()){
+                            if (m1.equals(m)){
+                                exit=true;
+                                break;
+                            }
+                        }
+                        if (exit){
+                            break;
+                        }
+                    }
+                    if (m.equals(symbles.get(equ.getResult()).getName())){
+                        //m是A
+                        exit=true;
+                    }
+                    if (exit){
+                        //跳过
+                        continue;
+                    }else {
+                        //1
+                        System.out.println("MOV "+m+",dx");
+                        //2
+                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
+                            //m不是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    break;
+                                }
+                            }
+                        }else {
+                            //m是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    value.getLocation().add("dx");
+                                }
+                            }
+                        }
+                        //3
+                        rValueDx.remove(m);
+                    }
+                }
+                register="dx";
+                return register;
+            }
+
+            //将引用位置最远的寄存器分配
+            if (bxRef <= dxRef) {
+                //bx近，分配给dx
+                dx.setName(symbles.get(equ.getResult()).getName());
+                boolean exit=false;
+                for (String m:rValueDx){
+                    //判断m是否在aValue中
+                    for (aValue value:aValues){
+                        //m在
+                        for (String m1:value.getLocation()){
+                            if (m1.equals(m)){
+                                exit=true;
+                                break;
+                            }
+                        }
+                        if (exit){
+                            break;
+                        }
+                    }
+                    if (m.equals(symbles.get(equ.getResult()).getName())){
+                        //m是A
+                        exit=true;
+                    }
+                    if (exit){
+                        //跳过
+                        continue;
+                    }else {
+                        //1
+                        System.out.println("MOV "+m+",dx");
+                        //2
+                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
+                            //m不是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    break;
+                                }
+                            }
+                        }else {
+                            //m是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    value.getLocation().add("dx");
+                                }
+                            }
+                        }
+                        //3
+                        rValueDx.remove(m);
+                    }
+                }
+                register = "dx";
+            } else {
+                //dx近，分配给bx
+                bx.setName(symbles.get(equ.getResult()).getName());
+                boolean exit=false;
+                for (String m:rValueBx){
+                    //判断m是否在aValue中
+                    for (aValue value:aValues){
+                        //m在
+                        for (String m1:value.getLocation()){
+                            if (m1.equals(m)){
+                                exit=true;
+                                break;
+                            }
+                        }
+                        if (exit){
+                            break;
+                        }
+                    }
+                    if (m.equals(symbles.get(equ.getResult()).getName())){
+                        //m是A
+                        exit=true;
+                    }
+                    if (exit){
+                        //跳过
+                        continue;
+                    }else {
+                        //1
+                        System.out.println("MOV "+m+",bx");
+                        //2
+                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
+                            //m不是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    break;
+                                }
+                            }
+                        }else {
+                            //m是B
+                            for (aValue value:aValues){
+                                if (m.equals(value.getName())){
+                                    value.getLocation().clear();
+                                    value.getLocation().add(m);
+                                    value.getLocation().add("bx");
+                                }
+                            }
+                        }
+                        //3
+                        rValueBx.remove(m);
+                    }
+                }
+                register = "bx";
+            }
+            return register;
         }
     }
 
     /**
      * 目标代码生成策略
+     *
      * @param genStacks
      * @param list
      */
-    public void Generate(ArrayList<GenStruct> genStacks,List list){
+    public void Generate(ArrayList<GenStruct> genStacks, List list) {
         int length = genStacks.size();
         int count = 0;
-        while (count < length){
+        while (count < length) {
             //label (op,left,right,object)
             int label = genStacks.get(count).getLabel();
             //op
@@ -193,25 +444,23 @@ public class Generator {
             //left
             String leftName;
             int addr1 = genStacks.get(count).getAddr1();
-            if (addr1!=-1) {
-                leftName = list.symbles.get(addr1-1).getName();
-            }
-            else {
+            if (addr1 != -1) {
+                leftName = list.symbles.get(addr1 - 1).getName();
+            } else {
                 leftName = "null";
             }
             //right
             String rightName;
             int addr2 = genStacks.get(count).getAddr2();
-            if (addr2!=-1) {
-                rightName = list.symbles.get(addr2-1).getName();
-            }
-            else {
+            if (addr2 != -1) {
+                rightName = list.symbles.get(addr2 - 1).getName();
+            } else {
                 rightName = "null";
             }
 
-            switch (str){
+            switch (str) {
                 //(:=,left,null,object)
-                case ":=":{
+                case ":=": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -229,7 +478,7 @@ public class Generator {
                     //非跳转的情况，object为syble表里面新加的数字
                     String objectName;
                     int result = genStacks.get(count).getResult();
-                    objectName = list.symbles.get(result-1).getName();
+                    objectName = list.symbles.get(result - 1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack2 = new ObjectCode_Stack();
                     objectCode_stack2.setOp("mov");
@@ -240,7 +489,7 @@ public class Generator {
                     break;
                 }
                 //(+,left,right,object)
-                case "+":{
+                case "+": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -263,7 +512,7 @@ public class Generator {
                     //非跳转的情况，object为syble表里面新加的数字
                     String objectName;
                     int result = genStacks.get(count).getResult();
-                    objectName = list.symbles.get(result-1).getName();
+                    objectName = list.symbles.get(result - 1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -273,7 +522,7 @@ public class Generator {
                     break;
                 }
                 //(-,left,right,object)
-                case "-":{
+                case "-": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -297,7 +546,7 @@ public class Generator {
                     //非跳转的情况，object为syble表里面新加的数字
                     String objectName;
                     int result = genStacks.get(count).getResult();
-                    objectName = list.symbles.get(result-1).getName();
+                    objectName = list.symbles.get(result - 1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -307,7 +556,7 @@ public class Generator {
                     break;
                 }
                 //(*,left,right,object)
-                case "*":{
+                case "*": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -331,7 +580,7 @@ public class Generator {
                     //非跳转的情况，object为syble表里面新加的数字
                     String objectName;
                     int result = genStacks.get(count).getResult();
-                    objectName = list.symbles.get(result-1).getName();
+                    objectName = list.symbles.get(result - 1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -341,7 +590,7 @@ public class Generator {
                     break;
                 }
                 //(/,left,right,object)
-                case "/":{
+                case "/": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -365,7 +614,7 @@ public class Generator {
                     //非跳转的情况，object为syble表里面新加的数字
                     String objectName;
                     int result = genStacks.get(count).getResult();
-                    objectName = list.symbles.get(result-1).getName();
+                    objectName = list.symbles.get(result - 1).getName();
                     //(mov,object,r)
                     ObjectCode_Stack objectCode_stack3 = new ObjectCode_Stack();
                     objectCode_stack3.setOp("mov");
@@ -375,7 +624,7 @@ public class Generator {
                     break;
                 }
                 //(j,null,null,object)
-                case "j":{
+                case "j": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -401,7 +650,7 @@ public class Generator {
                     break;
                 }
                 //(j<,left,right,object)
-                case "j<":{
+                case "j<": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -440,7 +689,7 @@ public class Generator {
                     break;
                 }
                 //(j<=,left,right,object)
-                case "j<=":{
+                case "j<=": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -479,7 +728,7 @@ public class Generator {
                     break;
                 }
                 //(j>,left,right,object)
-                case "j>":{
+                case "j>": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -518,7 +767,7 @@ public class Generator {
                     break;
                 }
                 //(j>=,left,right,object)
-                case "j>=":{
+                case "j>=": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -557,7 +806,7 @@ public class Generator {
                     break;
                 }
                 //(j=,left,right,object)
-                case "j=":{
+                case "j=": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -596,7 +845,7 @@ public class Generator {
                     break;
                 }
                 //(j<>,left,right,object)
-                case "j<>":{
+                case "j<>": {
                     //lebel
                     ObjectCode_Stack objectCode_stack = new ObjectCode_Stack();
                     objectCode_stack.setLabel(label);
@@ -634,17 +883,18 @@ public class Generator {
                     objectCode_stacks.add(objectCode_stack4);
                     break;
                 }
-                default:{
+                default: {
                     break;
                 }
             }
             count++;
         }
     }
-    public void codePrint(){
+
+    public void codePrint() {
         System.out.println("目标代码生成：");
         int length = objectCode_stacks.size();
-        for (int i=0;i<length;i++){
+        for (int i = 0; i < length; i++) {
             System.out.println(objectCode_stacks.get(i).toString());
         }
     }
