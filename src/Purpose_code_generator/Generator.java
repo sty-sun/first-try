@@ -6,6 +6,7 @@ import Lexical_analyzer.WrongList;
 import Syntax_and_Semantic_Analyzer.EQU;
 import Lexical_analyzer.List;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 public class Generator {
     public ArrayList<ObjectCode_Stack> objectCode_stacks = new ArrayList<ObjectCode_Stack>();
@@ -13,8 +14,9 @@ public class Generator {
     public Register dx = new Register(false,"dx");
     public static ArrayList<String> rValueBx = new ArrayList<String>();
     public static ArrayList<String> rValueDx = new ArrayList<String>();
-    public static ArrayList[] aValue;
-    public static int[] info;
+    public static ArrayList<aValue> aValues = new ArrayList<aValue>();
+    public static ArrayList<Info> infos = new ArrayList<>();
+    //待用信息表
     /**
      * 扫描语法语义分析器生成的四元式，将其改造成目的代码生成器所需要的格式
      * @param equs
@@ -23,18 +25,11 @@ public class Generator {
     public void Scan(ArrayList<EQU> equs, List list, ArrayList<Symble> symbles){
         ArrayList<Symble> symbles1 = new ArrayList<>();
         for (int i=0;i<symbles.size();i++){
-            if (symbles.get(i).getType()==18){
+            if ((symbles.get(i).getType()==18)||(symbles.get(i).getType()==0)){
                 symbles1.add(symbles.get(i));
             }
         }
-        //aValue初始化
-        aValue = new ArrayList[symbles1.size()];
-        for (int i=0;i<aValue.length;i++){
-            aValue[i] = new ArrayList<>();
-            aValue[i].add(symbles1.get(i).getName());
-        }
-        //info初始化
-        info = new int[symbles1.size()];
+
         ArrayList<GenStruct> GenStack = new ArrayList<GenStruct>();
         int length = equs.size();
         int count = 0;

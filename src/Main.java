@@ -35,7 +35,7 @@ public class Main {
         AnalysisFunction analysisFunction=new AnalysisFunction();
         List list = analysisFunction.judge(readMap);
         ArrayList<Symble> symbles = new ArrayList<>();
-        symbles = list.symbles;
+
         for (Token token:list.tokens){
             System.out.println(token.toString());
         }
@@ -47,6 +47,7 @@ public class Main {
         ArrayList<EQU> Elist = new ArrayList<EQU>();
         System.out.println("--------------------------------");
         Elist=parser.runParser(list);
+        symbles = list.symbles;
         for (EQU equ:Elist){
             System.out.println(equ.toString());
         }
