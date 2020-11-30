@@ -248,11 +248,11 @@ public class Generator {
         //分配寄存器
         if ((!bx.isStatus()) || ((bx.isStatus()) && (bx.getName().equals(symbles.get(equ.getOp1()-1).getName())))) {
             bx.setStatus(true);
-            bx.setName(symbles.get(equ.getResult()).getName());
+            bx.setName(symbles.get(equ.getResult()-1).getName());
             return "bx";
         } else if ((!dx.isStatus()) || ((dx.isStatus()) && (dx.getName().equals(symbles.get(equ.getOp1()-1).getName())))) {
             dx.setStatus(true);
-            bx.setName(symbles.get(equ.getResult()).getName());
+            bx.setName(symbles.get(equ.getResult()-1).getName());
             return "dx";
         } else {
             //寄存器都被分配了
@@ -275,111 +275,111 @@ public class Generator {
             }
             //后面不再使用直接分配
             if (bxRef==-1){
-                bx.setName(symbles.get(equ.getResult()).getName());
+                bx.setName(symbles.get(equ.getResult()-1).getName());
                 boolean exit=false;
-                for (String m:rValueBx){
-                    //判断m是否在aValue中
-                    for (aValue value:aValues){
-                        //m在
-                        for (String m1:value.getLocation()){
-                            if (m1.equals(m)){
-                                exit=true;
-                                break;
-                            }
-                        }
-                        if (exit){
-                            break;
-                        }
-                    }
-                    if (m.equals(symbles.get(equ.getResult()).getName())){
-                        //m是A
-                        exit=true;
-                    }
-                    if (exit){
-                        //跳过
-                        continue;
-                    }else {
-                        //1
-                        System.out.println("MOV "+m+",bx");
-                        //2
-                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
-                            //m不是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    break;
-                                }
-                            }
-                        }else {
-                            //m是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    value.getLocation().add("bx");
-                                }
-                            }
-                        }
-                        //3
-                        rValueBx.remove(m);
-                    }
-                }
+//                for (String m:rValueBx){
+//                    //判断m是否在aValue中
+//                    for (aValue value:aValues){
+//                        //m在
+//                        for (String m1:value.getLocation()){
+//                            if (m1.equals(m)){
+//                                exit=true;
+//                                break;
+//                            }
+//                        }
+//                        if (exit){
+//                            break;
+//                        }
+//                    }
+//                    if (m.equals(symbles.get(equ.getResult()-1).getName())){
+//                        //m是A
+//                        exit=true;
+//                    }
+//                    if (exit){
+//                        //跳过
+//                        continue;
+//                    }else {
+//                        //1
+//                        System.out.println("MOV "+m+",bx");
+//                        //2
+//                        if (!m.equals(symbles.get(equ.getOp1()-1).getName())){
+//                            //m不是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    break;
+//                                }
+//                            }
+//                        }else {
+//                            //m是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    value.getLocation().add("bx");
+//                                }
+//                            }
+//                        }
+//                        //3
+//                        rValueBx.remove(m);
+//                    }
+//                }
                 register="bx";
                 return register;
             }
             if (dxRef==-1){
                 System.out.println(equ.toString());
-                dx.setName(symbles.get(equ.getResult()).getName());
+                dx.setName(symbles.get(equ.getResult()-1).getName());
                 boolean exit=false;
-                for (String m:rValueDx){
-                    //判断m是否在aValue中
-                    for (aValue value:aValues){
-                        //m在
-                        for (String m1:value.getLocation()){
-                            if (m1.equals(m)){
-                                exit=true;
-                                break;
-                            }
-                        }
-                        if (exit){
-                            break;
-                        }
-                    }
-                    if (m.equals(symbles.get(equ.getResult()).getName())){
-                        //m是A
-                        exit=true;
-                    }
-                    if (exit){
-                        //跳过
-                        continue;
-                    }else {
-                        //1
-                        System.out.println("MOV "+m+",dx");
-                        //2
-                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
-                            //m不是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    break;
-                                }
-                            }
-                        }else {
-                            //m是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    value.getLocation().add("dx");
-                                }
-                            }
-                        }
-                        //3
-                        rValueDx.remove(m);
-                    }
-                }
+//                for (String m:rValueDx){
+//                    //判断m是否在aValue中
+//                    for (aValue value:aValues){
+//                        //m在
+//                        for (String m1:value.getLocation()){
+//                            if (m1.equals(m)){
+//                                exit=true;
+//                                break;
+//                            }
+//                        }
+//                        if (exit){
+//                            break;
+//                        }
+//                    }
+//                    if (m.equals(symbles.get(equ.getResult()-1).getName())){
+//                        //m是A
+//                        exit=true;
+//                    }
+//                    if (exit){
+//                        //跳过
+//                        continue;
+//                    }else {
+//                        //1
+//                        System.out.println("MOV "+m+",dx");
+//                        //2
+//                        if (!m.equals(symbles.get(equ.getOp1()-1).getName())){
+//                            //m不是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    break;
+//                                }
+//                            }
+//                        }else {
+//                            //m是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    value.getLocation().add("dx");
+//                                }
+//                            }
+//                        }
+//                        //3
+//                        rValueDx.remove(m);
+//                    }
+//                }
                 register="dx";
                 return register;
             }
@@ -387,109 +387,109 @@ public class Generator {
             //将引用位置最远的寄存器分配
             if (bxRef <= dxRef) {
                 //bx近，分配给dx
-                dx.setName(symbles.get(equ.getResult()).getName());
+                dx.setName(symbles.get(equ.getResult()-1).getName());
                 boolean exit=false;
-                for (String m:rValueDx){
-                    //判断m是否在aValue中
-                    for (aValue value:aValues){
-                        //m在
-                        for (String m1:value.getLocation()){
-                            if (m1.equals(m)){
-                                exit=true;
-                                break;
-                            }
-                        }
-                        if (exit){
-                            break;
-                        }
-                    }
-                    if (m.equals(symbles.get(equ.getResult()).getName())){
-                        //m是A
-                        exit=true;
-                    }
-                    if (exit){
-                        //跳过
-                        continue;
-                    }else {
-                        //1
-                        System.out.println("MOV "+m+",dx");
-                        //2
-                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
-                            //m不是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    break;
-                                }
-                            }
-                        }else {
-                            //m是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    value.getLocation().add("dx");
-                                }
-                            }
-                        }
-                        //3
-                        rValueDx.remove(m);
-                    }
-                }
+//                for (String m:rValueDx){
+//                    //判断m是否在aValue中
+//                    for (aValue value:aValues){
+//                        //m在
+//                        for (String m1:value.getLocation()){
+//                            if (m1.equals(m)){
+//                                exit=true;
+//                                break;
+//                            }
+//                        }
+//                        if (exit){
+//                            break;
+//                        }
+//                    }
+//                    if (m.equals(symbles.get(equ.getResult()-1).getName())){
+//                        //m是A
+//                        exit=true;
+//                    }
+//                    if (exit){
+//                        //跳过
+//                        continue;
+//                    }else {
+//                        //1
+//                        System.out.println("MOV "+m+",dx");
+//                        //2
+//                        if (!m.equals(symbles.get(equ.getOp1()-1).getName())){
+//                            //m不是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    break;
+//                                }
+//                            }
+//                        }else {
+//                            //m是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    value.getLocation().add("dx");
+//                                }
+//                            }
+//                        }
+//                        //3
+//                        rValueDx.remove(m);
+//                    }
+//                }
                 register = "dx";
             } else {
                 //dx近，分配给bx
-                bx.setName(symbles.get(equ.getResult()).getName());
+                bx.setName(symbles.get(equ.getResult()-1).getName());
                 boolean exit=false;
-                for (String m:rValueBx){
-                    //判断m是否在aValue中
-                    for (aValue value:aValues){
-                        //m在
-                        for (String m1:value.getLocation()){
-                            if (m1.equals(m)){
-                                exit=true;
-                                break;
-                            }
-                        }
-                        if (exit){
-                            break;
-                        }
-                    }
-                    if (m.equals(symbles.get(equ.getResult()).getName())){
-                        //m是A
-                        exit=true;
-                    }
-                    if (exit){
-                        //跳过
-                        continue;
-                    }else {
-                        //1
-                        System.out.println("MOV "+m+",bx");
-                        //2
-                        if (!m.equals(symbles.get(equ.getOp1()).getName())){
-                            //m不是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    break;
-                                }
-                            }
-                        }else {
-                            //m是B
-                            for (aValue value:aValues){
-                                if (m.equals(value.getName())){
-                                    value.getLocation().clear();
-                                    value.getLocation().add(m);
-                                    value.getLocation().add("bx");
-                                }
-                            }
-                        }
-                        //3
-                        rValueBx.remove(m);
-                    }
-                }
+//                for (String m:rValueBx){
+//                    //判断m是否在aValue中
+//                    for (aValue value:aValues){
+//                        //m在
+//                        for (String m1:value.getLocation()){
+//                            if (m1.equals(m)){
+//                                exit=true;
+//                                break;
+//                            }
+//                        }
+//                        if (exit){
+//                            break;
+//                        }
+//                    }
+//                    if (m.equals(symbles.get(equ.getResult()-1).getName())){
+//                        //m是A
+//                        exit=true;
+//                    }
+//                    if (exit){
+//                        //跳过
+//                        continue;
+//                    }else {
+//                        //1
+//                        System.out.println("MOV "+m+",bx");
+//                        //2
+//                        if (!m.equals(symbles.get(equ.getOp1()-1).getName())){
+//                            //m不是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    break;
+//                                }
+//                            }
+//                        }else {
+//                            //m是B
+//                            for (aValue value:aValues){
+//                                if (m.equals(value.getName())){
+//                                    value.getLocation().clear();
+//                                    value.getLocation().add(m);
+//                                    value.getLocation().add("bx");
+//                                }
+//                            }
+//                        }
+//                        //3
+//                        rValueBx.remove(m);
+//                    }
+//                }
                 register = "bx";
             }
             return register;
@@ -542,6 +542,24 @@ public class Generator {
                     ObjectCode_Stack objectCode_stack1 = new ObjectCode_Stack();
                     objectCode_stack1.setOp("mov");
                     String Oop = judgeRegisterName(equ, list.symbles);
+
+                    //B存放的位置
+//                    String B1=null;
+//                    for (aValue aValue:aValues){
+//                        if (aValue.getName().equals(leftName)){
+//                            //找到了B的avalue
+//                            for (String location:aValue.getLocation()){
+//                                if (!location.equals(leftName)){
+//                                    //B在寄存器的地址
+//                                    B1=location;
+//                                }
+//                            }
+//                        }
+//                    }
+//                    //B1=R
+//                    if (B1.equals(Oop)){
+//                        //生成的代码是
+//                    }
                     objectCode_stack1.setOop(Oop);
                     objectCode_stack1.setSop(leftName);
                     objectCode_stacks.add(objectCode_stack1);
