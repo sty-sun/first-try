@@ -30,6 +30,7 @@ public class Generator {
         //aValue初始化
         aValue = new ArrayList[symbles1.size()];
         for (int i=0;i<aValue.length;i++){
+            aValue[i] = new ArrayList<>();
             aValue[i].add(symbles1.get(i).getName());
         }
         //info初始化
